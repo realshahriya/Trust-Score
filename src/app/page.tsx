@@ -1,65 +1,79 @@
-import Image from "next/image";
+import { Navbar } from "@/components/Navbar";
+import { SearchInput } from "@/components/SearchInput";
+import { ShieldCheck, Activity, Users, Lock } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen bg-cyber-bg flex flex-col relative overflow-hidden">
+      <Navbar />
+
+      {/* Background Gradients */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-trust-100/10 blur-[120px] rounded-full pointer-events-none" />
+
+      <main className="flex-1 flex flex-col items-center justify-center px-4 relative z-10 pt-20">
+        <div className="w-full max-w-4xl text-center space-y-8">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-trust-100/30 bg-trust-100/5 text-trust-100 text-sm font-medium tracking-wide animate-pulse-slow">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-trust-100 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-trust-100"></span>
+            </span>
+            Live Trust Mainnet Alpha
+          </div>
+
+          {/* Hero */}
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white drop-shadow-2xl">
+            Universal <span className="text-transparent bg-clip-text bg-gradient-to-r from-trust-100 to-blue-500">Trust Score</span> Layer
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+
+          <p className="text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+            The AI-powered reputation engine for the decentralized web.
+            Analyze wallets, contracts, and NFTs in real-time.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+
+          {/* Search Box */}
+          <div className="max-w-2xl mx-auto w-full pt-8">
+            <SearchInput className="shadow-2xl shadow-trust-100/10" />
+            <div className="flex justify-center gap-4 mt-4 text-sm text-zinc-500">
+              <span>Try: <button className="text-trust-100 hover:underline">vitalik.eth</button></span>
+              <span>or <button className="text-trust-100 hover:underline">0xBadContract</button></span>
+            </div>
+          </div>
+
+          {/* Features Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-20 text-left">
+            <Feature
+              icon={Activity}
+              title="Real-time Scoring"
+              desc="Continuous monitoring of on-chain behavior and risk patterns."
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <Feature
+              icon={Users}
+              title="Social Sentiment"
+              desc="AI analysis of community discussions and reputation signals."
+            />
+            <Feature
+              icon={Lock}
+              title="Fraud Detection"
+              desc="Instant alerts for rug pulls, wash trading, and plagiarism."
+            />
+          </div>
         </div>
       </main>
+
+      <footer className="py-8 text-center text-zinc-600 text-sm">
+        <p>© 2025 Universal Trust Layer. Powered by AI.</p>
+      </footer>
+    </div>
+  );
+}
+
+function Feature({ icon: Icon, title, desc }: { icon: any, title: string, desc: string }) {
+  return (
+    <div className="p-6 rounded-xl bg-white/5 border border-white/10 hover:border-trust-100/30 transition-colors backdrop-blur-sm">
+      <Icon className="w-8 h-8 text-trust-100 mb-4" />
+      <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
+      <p className="text-zinc-400">{desc}</p>
     </div>
   );
 }
