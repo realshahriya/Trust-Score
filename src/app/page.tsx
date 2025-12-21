@@ -1,79 +1,98 @@
-import { Navbar } from "@/components/Navbar";
+"use client";
+
 import { SearchInput } from "@/components/SearchInput";
-import { ShieldCheck, Activity, Users, Lock } from "lucide-react";
+import { RecentActivity } from "@/components/RecentActivity";
+import { StatsCard } from "@/components/StatsCard";
+import { ThreatMap } from "@/components/ThreatMap";
+import { ShieldCheck, Activity, Globe, Wallet, AlertTriangle } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-cyber-bg flex flex-col relative overflow-hidden">
-      <Navbar />
+    <div className="p-6 space-y-8 relative z-10 overflow-y-auto">
+      {/* Welcome Section */}
+      <div className="flex flex-col md:flex-row justify-between items-end gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-white mb-2">Platform Overview</h1>
+          <p className="text-zinc-400">Real-time surveillance of the decentralized web.</p>
+        </div>
 
-      {/* Background Gradients */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-trust-100/10 blur-[120px] rounded-full pointer-events-none" />
+        <div className="flex gap-3">
+          <button className="px-4 py-2 bg-trust-100 text-black font-bold rounded hover:bg-trust-100/90 transition-colors">
+            New Analysis
+          </button>
+        </div>
+      </div>
 
-      <main className="flex-1 flex flex-col items-center justify-center px-4 relative z-10 pt-20">
-        <div className="w-full max-w-4xl text-center space-y-8">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-trust-100/30 bg-trust-100/5 text-trust-100 text-sm font-medium tracking-wide animate-pulse-slow">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-trust-100 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-trust-100"></span>
-            </span>
-            Live Trust Mainnet Alpha
-          </div>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatsCard
+          title="Global Trust Score"
+          value="84/100"
+          trend="-1.2%"
+          trendUp={false}
+          icon={ShieldCheck}
+          description="Network average health"
+        />
+        <StatsCard
+          title="Active Scans"
+          value="452,190"
+          trend="+8.5%"
+          trendUp={true}
+          icon={Activity}
+          description="Entities analyzed last 24h"
+        />
+        <StatsCard
+          title="Risky Entities"
+          value="12,832"
+          trend="+124"
+          trendUp={false}
+          icon={AlertTriangle}
+          description="High risk alerts pending"
+        />
+        <StatsCard
+          title="Verified Protocol"
+          value="$82.4B"
+          icon={Wallet}
+          description="Total TVL monitored"
+        />
+      </div>
 
-          {/* Hero */}
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white drop-shadow-2xl">
-            Universal <span className="text-transparent bg-clip-text bg-gradient-to-r from-trust-100 to-blue-500">Trust Score</span> Layer
-          </h1>
+      {/* Main Layout Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-          <p className="text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-            The AI-powered reputation engine for the decentralized web.
-            Analyze wallets, contracts, and NFTs in real-time.
-          </p>
+        {/* Main Chart / Search Area */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Search Hero */}
+          <div className="bg-gradient-to-br from-cyber-card to-black border border-cyber-border rounded-xl p-8 flex flex-col items-center justify-center text-center space-y-6 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-trust-100/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
 
-          {/* Search Box */}
-          <div className="max-w-2xl mx-auto w-full pt-8">
-            <SearchInput className="shadow-2xl shadow-trust-100/10" />
-            <div className="flex justify-center gap-4 mt-4 text-sm text-zinc-500">
-              <span>Try: <button className="text-trust-100 hover:underline">vitalik.eth</button></span>
-              <span>or <button className="text-trust-100 hover:underline">0xBadContract</button></span>
+            <div className="relative z-10 max-w-lg w-full space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold text-white mb-2">Deep Scan Analysis</h2>
+                <p className="text-zinc-400">Enter a wallet address, ENS domain, or contract to generate a comprehensive trust report.</p>
+              </div>
+
+              <SearchInput className="shadow-2xl shadow-trust-100/10" />
+
+              <div className="flex flex-wrap justify-center gap-2 text-xs text-zinc-500">
+                <span className="px-2 py-1 bg-white/5 rounded border border-white/10">vitalik.eth</span>
+                <span className="px-2 py-1 bg-white/5 rounded border border-white/10">0x742d...44e</span>
+                <span className="px-2 py-1 bg-white/5 rounded border border-white/10">uniswap</span>
+              </div>
             </div>
           </div>
 
-          {/* Features Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-20 text-left">
-            <Feature
-              icon={Activity}
-              title="Real-time Scoring"
-              desc="Continuous monitoring of on-chain behavior and risk patterns."
-            />
-            <Feature
-              icon={Users}
-              title="Social Sentiment"
-              desc="AI analysis of community discussions and reputation signals."
-            />
-            <Feature
-              icon={Lock}
-              title="Fraud Detection"
-              desc="Instant alerts for rug pulls, wash trading, and plagiarism."
-            />
+          {/* Network Status / Globe Map Placeholder */}
+          <div className="h-64">
+            <ThreatMap />
           </div>
         </div>
-      </main>
 
-      <footer className="py-8 text-center text-zinc-600 text-sm">
-        <p>© 2025 Universal Trust Layer. Powered by AI.</p>
-      </footer>
-    </div>
-  );
-}
-
-function Feature({ icon: Icon, title, desc }: { icon: any, title: string, desc: string }) {
-  return (
-    <div className="p-6 rounded-xl bg-white/5 border border-white/10 hover:border-trust-100/30 transition-colors backdrop-blur-sm">
-      <Icon className="w-8 h-8 text-trust-100 mb-4" />
-      <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
-      <p className="text-zinc-400">{desc}</p>
+        {/* Right Sidebar: Activity Feed */}
+        <div className="h-[600px]">
+          <RecentActivity />
+        </div>
+      </div>
     </div>
   );
 }

@@ -7,13 +7,13 @@ export interface AIAnalysisResult {
 }
 
 /**
- * AI Agent: ChainGPT Security Auditor
+ * AI Agent: AI Security Auditor
  * 
  * In a production environment, this function would send the `chainData` 
- * and `calculatedScore` to the ChainGPT API (or OpenAI) with a system prompt.
+ * and `calculatedScore` to the AI API (or OpenAI) with a system prompt.
  * 
  * Example Prompt:
- * "You are ChainGPT. Analyze this wallet: {balance: 50 ETH, txs: 5000}. 
+ * "You are AI. Analyze this wallet: {balance: 50 ETH, txs: 5000}. 
  * Summarize its reputation in 2 sentences."
  */
 export async function generateSecurityReport(
@@ -64,7 +64,7 @@ export async function generateSecurityReport(
 
     } else {
         riskLevel = "Critical";
-        summary = `**CRITICAL SECURITY ALERT:** ChainGPT heuristics identify this entity as **Dangerous**. ` +
+        summary = `**CRITICAL SECURITY ALERT:** Our Security AI heuristics identify this entity as **Dangerous**. ` +
             `Signals indicate potential involvement in malicious activities such as rug pulls or phishing. ` +
             `Immediate dissociation recommended. ${balance > 100 ? "Note: High balance may be result of illicit drains." : "Wallet appears to be disposable."}`;
 

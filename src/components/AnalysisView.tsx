@@ -7,13 +7,37 @@ import { EntityData } from '@/lib/mockData';
 import { TrustGauge } from '@/components/TrustGauge';
 import { RiskCard } from '@/components/RiskCard';
 import { SocialSentiment } from '@/components/SocialSentiment';
-import { Loader2, ShieldAlert, BadgeCheck, Copy, Database } from 'lucide-react';
+import { SimulationEngine } from '@/components/SimulationEngine';
+import { Loader2, ShieldAlert, BadgeCheck, Copy, Database, ArrowUpRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+
+const CHAIN_CONFIG: Record<string, { name: string, explorer: string }> = {
+    "1": { name: "Ethereum Mainnet", explorer: "https://etherscan.io" },
+    "56": { name: "BNB Smart Chain", explorer: "https://bscscan.com" },
+    "137": { name: "Polygon", explorer: "https://polygonscan.com" },
+    "43114": { name: "Avalanche C-Chain", explorer: "https://snowtrace.io" },
+    "42161": { name: "Arbitrum One", explorer: "https://arbiscan.io" },
+    "10": { name: "Optimism", explorer: "https://optimistic.etherscan.io" },
+    "8453": { name: "Base", explorer: "https://basescan.org" },
+    "324": { name: "zkSync Era", explorer: "https://explorer.zksync.io" },
+    "59144": { name: "Linea", explorer: "https://lineascan.build" },
+    "534352": { name: "Scroll", explorer: "https://scrollscan.com" },
+    "81457": { name: "Blast", explorer: "https://blastscan.io" },
+    "250": { name: "Fantom Opera", explorer: "https://ftmscan.com" },
+    "25": { name: "Cronos", explorer: "https://cronoscan.com" },
+    "100": { name: "Gnosis Chain", explorer: "https://gnosisscan.io" },
+    "1284": { name: "Moonbeam", explorer: "https://moonscan.io" },
+    "1313161554": { name: "Aurora", explorer: "https://explorer.aurora.dev" },
+    "42220": { name: "Celo", explorer: "https://celoscan.io" },
+    "1088": { name: "Metis", explorer: "https://andromeda-explorer.metis.io" },
+    "5000": { name: "Mantle", explorer: "https://explorer.mantle.xyz" }
+};
 
 export default function AnalysisView() {
     const searchParams = useSearchParams();
     const query = searchParams.get('q') || "Unknown";
     const chainId = searchParams.get('chain') || "1";
+    const chainInfo = CHAIN_CONFIG[chainId] || { name: `Chain ID: ${chainId}`, explorer: "https://etherscan.io" };
 
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<EntityData | null>(null);
@@ -58,7 +82,7 @@ export default function AnalysisView() {
             });
 
         return () => clearInterval(interval);
-    }, [query]);
+    }, [query, chainId]);
 
     if (loading) {
         const steps = [
@@ -96,11 +120,20 @@ export default function AnalysisView() {
 
     if (error) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
-                <ShieldAlert className="w-16 h-16 text-red-500" />
-                <h2 className="text-xl font-bold text-white">Analysis Failed</h2>
-                <p className="text-zinc-400">{error}</p>
-                <button onClick={() => window.location.reload()} className="px-4 py-2 bg-white/10 rounded hover:bg-white/20 transition">Retry</button>
+            <div className="flex flex-col items-center justify-center h-[50vh] space-y-6">
+                <div className="bg-red-500/10 border border-red-500/20 p-8 rounded-2xl flex flex-col items-center max-w-md text-center">
+                    <div className="p-4 bg-red-500/20 rounded-full mb-4">
+                        <ShieldAlert className="w-12 h-12 text-red-500" />
+                    </div>
+                    <h2 className="text-xl font-bold text-white mb-2">Analysis Failed</h2>
+                    <p className="text-zinc-400 mb-6">{error}</p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition-colors shadow-lg shadow-red-500/20"
+                    >
+                        Retry Analysis
+                    </button>
+                </div>
             </div>
         );
     }
@@ -127,6 +160,7 @@ export default function AnalysisView() {
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
+                    <ExplorerLink chainId={chainId} address={data.id} />
                     {data.score < 50 && (
                         <div className="px-4 py-2 bg-red-500/10 border border-red-500/50 rounded text-red-500 flex items-center gap-2">
                             <ShieldAlert className="w-5 h-5" />
@@ -185,36 +219,71 @@ export default function AnalysisView() {
 
                 {/* Right Col: Risks & Sentiment */}
                 <div className="lg:col-span-2 space-y-6">
-                    {/* Risk Factors */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {data.risks.map((risk, i) => (
                             <RiskCard key={i} {...risk} />
                         ))}
                     </div>
 
+                    {/* Transaction Simulator */}
+                    <SimulationEngine address={data.id} isContract={data.type === 'contract' || data.type === 'token'} />
+
                     {/* Social Sentiment Chart */}
                     <SocialSentiment data={data.sentiment} />
 
-                    {/* Raw Data Mock */}
-                    <div className="bg-black/40 rounded-xl p-4 border border-cyber-border font-mono text-xs text-zinc-500 overflow-x-auto">
-                        <div className="flex justify-between mb-2">
-                            <span className="font-bold text-zinc-400">Raw Signal Data</span>
-                            <span className="bg-trust-100/10 text-trust-100 px-2 rounded">JSON</span>
+                    {/* Explorer Data */}
+                    <div className="bg-black/40 rounded-xl p-6 border border-cyber-border space-y-4">
+                        <div className="flex items-center justify-between border-b border-cyber-border pb-4">
+                            <h3 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2">
+                                <Database className="w-4 h-4 text-trust-100" />
+                                On-Chain Signals
+                            </h3>
+                            <span className="text-xs text-zinc-500 font-mono">{chainInfo.name}</span>
                         </div>
-                        <pre>
-                            {JSON.stringify({
-                                id: data.id,
-                                type: data.type,
-                                chainId: chainId,
-                                metrics: {
-                                    score: data.score,
-                                    balance: data.marketData?.portfolioValueUsd || "0",
-                                    mentions: data.mentionsCount || 0
-                                },
-                                risks: data.risks.map(r => r.title),
-                                analysis_ts: new Date().toISOString()
-                            }, null, 2)}
-                        </pre>
+
+                        <div className="grid grid-cols-2 gap-y-4 text-sm">
+                            <div className="text-zinc-500">Address Type</div>
+                            <div className="text-zinc-200 capitalize text-right font-medium">{data.type}</div>
+
+                            <div className="text-zinc-500">Balance</div>
+                            <div className="text-zinc-200 text-right font-mono">
+                                {data.marketData?.portfolioValueUsd
+                                    ? `$${data.marketData.portfolioValueUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })}`
+                                    : '0.00 ETH'
+                                }
+                            </div>
+
+                            {data.type === 'token' && (
+                                <>
+                                    <div className="text-zinc-500">Token Standard</div>
+                                    <div className="text-trust-100 text-right font-mono">ERC-20</div>
+
+                                    <div className="text-zinc-500">Symbol</div>
+                                    <div className="text-zinc-200 text-right font-bold">{data.id.split('(')[1]?.replace(')', '') || 'Unknown'}</div>
+                                </>
+                            )}
+
+                            {data.type === 'contract' && (
+                                <>
+                                    <div className="text-zinc-500">Verification</div>
+                                    <div className="text-zinc-400 text-right italic">Unknown Source</div>
+                                </>
+                            )}
+
+                            <div className="text-zinc-500">Last Active</div>
+                            <div className="text-zinc-200 text-right">Just now</div>
+                        </div>
+
+                        <div className="pt-4 mt-2 border-t border-cyber-border/50">
+                            <a
+                                href={`${chainInfo.explorer}/address/${data.id}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block w-full py-2 bg-white/5 hover:bg-white/10 rounded text-center text-xs text-zinc-400 hover:text-white transition-colors border border-white/5"
+                            >
+                                View full history on Explorer
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -226,7 +295,8 @@ function Badge({ type }: { type: string }) {
     const colors = {
         wallet: "bg-blue-500/10 text-blue-400 border-blue-500/20",
         contract: "bg-purple-500/10 text-purple-400 border-purple-500/20",
-        nft: "bg-pink-500/10 text-pink-400 border-pink-500/20"
+        nft: "bg-pink-500/10 text-pink-400 border-pink-500/20",
+        token: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
     };
     // @ts-ignore
     const c = colors[type] || colors.wallet;
@@ -235,6 +305,31 @@ function Badge({ type }: { type: string }) {
         <span className={`px-2 py-0.5 rounded text-xs font-medium border uppercase ${c}`}>
             {type}
         </span>
+    );
+}
+
+function ExplorerLink({ chainId, address }: { chainId: string, address: string }) {
+    const chainInfo = CHAIN_CONFIG[chainId] || CHAIN_CONFIG["1"];
+
+    // Extract actual address from ID string if possible (mock data has "Name (0x..)")
+    // If no parens, assume it's just the address
+    const match = address.match(/\((0x[a-fA-F0-9]{40})\)/);
+    const cleanAddress = match ? match[1] : (address.startsWith('0x') ? address : null);
+
+    // Check if it's a valid address format to link, otherwise don't render or disable
+    if (!cleanAddress) return null;
+
+    return (
+        <a
+            href={`${chainInfo.explorer}/address/${cleanAddress}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs text-zinc-400 hover:text-white transition-colors"
+        >
+            <span className="hidden md:inline">View on Explorer</span>
+            <span className="md:hidden">Explorer</span>
+            <ArrowUpRight className="w-3 h-3" />
+        </a>
     );
 }
 

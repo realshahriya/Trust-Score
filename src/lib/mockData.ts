@@ -3,7 +3,7 @@ export type ScoreHistoryPoint = { date: string; score: number };
 
 export interface EntityData {
     id: string;
-    type: 'wallet' | 'contract' | 'nft';
+    type: 'wallet' | 'contract' | 'nft' | 'token';
     score: number;
     label: 'Safe' | 'Caution' | 'High Risk';
     summary: string;

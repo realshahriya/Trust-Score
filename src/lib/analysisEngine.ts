@@ -14,15 +14,20 @@ export async function analyzeEntity(input: string, chainId: string = '1'): Promi
     }
 
     // 1.5 Check for Known Famous Tokens (Whitelist)
+    // 1.5 Check for Known Famous Tokens (Whitelist)
     const normalizedAddr = chainData.address.toLowerCase();
-    if (FAMOUS_TOKENS[normalizedAddr]) {
+
+    // Check if it's a known token AND matches the current chain
+    // This prevents "Fake" tokens on L2s that might just happen to have the same address (rare) 
+    // or user confusion when searching Mainnet addr on L2.
+    if (FAMOUS_TOKENS[normalizedAddr] && FAMOUS_TOKENS[normalizedAddr].networks.includes(chainId)) {
         const token = FAMOUS_TOKENS[normalizedAddr];
         const ethPrice = await getEthPrice();
         const balance = parseFloat(chainData.balance);
 
         return {
             id: `${token.name} (${token.symbol})`,
-            type: 'contract',
+            type: 'token',
             score: token.score,
             label: 'Safe',
             summary: `**VERIFIED ENTITY:** ${token.description} This is a well-known, high-trust smart contract in the ecosystem.`,
@@ -49,19 +54,27 @@ export async function analyzeEntity(input: string, chainId: string = '1'): Promi
         checkHype(chainData.ensName || chainData.address, 50) // Pass neutral score initially
     ]);
 
-    // 3. Normalize Risk Components (0-100 Scale, where 100 = Max Risk)
+    // 3. Normalize Risk Components
 
-    // A. On-Chain Risk (45%)
-    // Logic: 0 tx = 100 risk. 100+ tx = 0 risk.
+    // Auto-detect Token Type from Chain Data
+    let detectedType: EntityData['type'] = chainData.isContract ? 'contract' : 'wallet';
+    let entityName = chainData.ensName || chainData.address;
+
+    if (chainData.tokenMetadata) {
+        detectedType = 'token';
+        entityName = `${chainData.tokenMetadata.name} (${chainData.tokenMetadata.symbol})`;
+    }
+
     const txCount = chainData.txCount;
+    // ...
+    // Calculate Risks
     const txRisk = Math.max(0, 100 - txCount);
-    const isContractRisk = chainData.isContract ? 50 : 0; // Contracts carry inherent risk if not verified
-    const onChainRisk = Math.min(100, (txRisk + isContractRisk) / 2); // Average of factors
+    const isContractRisk = chainData.isContract && !chainData.tokenMetadata ? 50 : 0; // Verified Tokens are safer than random contracts
+    const onChainRisk = Math.min(100, (txRisk + isContractRisk) / 2);
 
     // B. Market Risk (30%)
-    // Logic: $0 balance = 100 risk. >$1000 balance = 0 risk.
     const balanceEth = parseFloat(chainData.balance);
-    const portfolioValue = balanceEth * ethPrice;
+    const portfolioValue = balanceEth * ethPrice; // For tokens this should ideally use totalSupply * price, but we stick to ETH balance for now unless Famous
     const marketRisk = Math.max(0, 100 - (portfolioValue / 10)); // Decays to 0 at $1000
 
     // C. Social Risk (15%)
@@ -105,8 +118,8 @@ export async function analyzeEntity(input: string, chainId: string = '1'): Promi
     if (aiRisk > 70) risks.push({ type: 'danger', title: 'AI Flagged', description: 'Pattern matches known risk vectors.' });
 
     return {
-        id: chainData.ensName || chainData.address,
-        type: chainData.isContract ? 'contract' : 'wallet',
+        id: entityName,
+        type: detectedType,
         score: finalScore,
         label,
         summary: aiReport.summary,
@@ -117,7 +130,8 @@ export async function analyzeEntity(input: string, chainId: string = '1'): Promi
         mentionsCount: hypeData.mentions,
         marketData: {
             ethPriceUsd: ethPrice,
-            portfolioValueUsd: portfolioValue
+            portfolioValueUsd: portfolioValue,
+            tokenPrice: undefined // We don't have real price for random tokens yet
         }
     };
 }

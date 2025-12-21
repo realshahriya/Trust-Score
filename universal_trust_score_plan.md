@@ -58,7 +58,7 @@ Example:
 
 ---
 
-### Step 4: LLM Reasoning Layer (ChainGPT)
+### Step 4: LLM Reasoning Layer (AI)
 
 - Input: structured JSON with normalized signals.
 - Task: pattern recognition, risk flag identification, explanation generation.
