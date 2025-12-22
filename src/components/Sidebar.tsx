@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ShieldCheck, LayoutDashboard, BookText, Settings, Menu, Palette } from "lucide-react";
+import { ShieldCheck, LayoutDashboard, Database, CreditCard, BookOpen, Settings, Menu, Palette, Box } from "lucide-react";
 import { useState } from "react";
 
 export function Sidebar() {
@@ -10,8 +10,11 @@ export function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
 
     const links = [
-        { name: "Dashboard", href: "/", icon: LayoutDashboard },
-        { name: "API Docs", href: "/api-docs", icon: BookText },
+        { name: "Overview", href: "/", icon: LayoutDashboard },
+        { name: "Sandbox", href: "/sandbox", icon: Box },
+        { name: "API Keys", href: "/api-keys", icon: Database },
+        { name: "Billing & Plans", href: "/billing", icon: CreditCard },
+        { name: "API Reference", href: "/api-docs", icon: BookOpen },
         { name: "Settings", href: "/settings", icon: Settings },
         { name: "System Design", href: "/design-system", icon: Palette },
     ];

@@ -7,7 +7,7 @@ import { twMerge } from 'tailwind-merge';
 
 export function SearchInput({
     className,
-    placeholder = "Search wallet, contract, or NFT...",
+    placeholder = "Enter wallet address to test API...",
     onSearch,
     compact = false
 }: {

@@ -26,34 +26,36 @@ export default function Home() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard
-          title="Global Trust Score"
-          value="84/100"
-          trend="-1.2%"
-          trendUp={false}
+          title="System Uptime"
+          value="99.99%"
+          trend="Stable"
+          trendUp={true}
           icon={ShieldCheck}
-          description="Network average health"
+          description="Service availability"
         />
         <StatsCard
-          title="Active Scans"
-          value="452,190"
-          trend="+8.5%"
+          title="API Requests"
+          value="4.2M"
+          trend="+12%"
           trendUp={true}
           icon={Activity}
-          description="Entities analyzed last 24h"
+          description="Your usage this month"
         />
         <StatsCard
-          title="Risky Entities"
-          value="12,832"
-          trend="+124"
-          trendUp={false}
-          icon={AlertTriangle}
-          description="High risk alerts pending"
+          title="Active Keys"
+          value="3/5"
+          trend="Active"
+          trendUp={true}
+          icon={Globe}
+          description="Provisioned endpoints"
         />
         <StatsCard
-          title="Verified Protocol"
-          value="$82.4B"
+          title="Current Usage"
+          value="$1,240"
+          trend="+8%"
+          trendUp={true}
           icon={Wallet}
-          description="Total TVL monitored"
+          description="Month to date"
         />
       </div>
 
@@ -62,22 +64,28 @@ export default function Home() {
 
         {/* Main Chart / Search Area */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Search Hero */}
+          {/* API Test Console */}
           <div className="bg-gradient-to-br from-cyber-card to-black border border-cyber-border rounded-xl p-8 flex flex-col items-center justify-center text-center space-y-6 relative overflow-hidden group">
             <div className="absolute inset-0 bg-trust-100/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
 
             <div className="relative z-10 max-w-lg w-full space-y-6">
               <div>
-                <h2 className="text-2xl font-bold text-white mb-2">Deep Scan Analysis</h2>
-                <p className="text-zinc-400">Enter a wallet address, ENS domain, or contract to generate a comprehensive trust report.</p>
+                <h2 className="text-2xl font-bold text-white mb-2">Integration Debugger</h2>
+                <p className="text-zinc-400">Test your API keys and simulate trust score requests in real-time.</p>
               </div>
 
-              <SearchInput className="shadow-2xl shadow-trust-100/10" />
+              <div className="space-y-2">
+                <SearchInput className="shadow-2xl shadow-trust-100/10" placeholder="Enter endpoint or address to scan..." />
+                <div className="flex justify-between text-xs text-zinc-500 font-mono">
+                  <span>POST /v1/scan</span>
+                  <span>Latency: 24ms</span>
+                </div>
+              </div>
 
               <div className="flex flex-wrap justify-center gap-2 text-xs text-zinc-500">
-                <span className="px-2 py-1 bg-white/5 rounded border border-white/10">vitalik.eth</span>
-                <span className="px-2 py-1 bg-white/5 rounded border border-white/10">0x742d...44e</span>
-                <span className="px-2 py-1 bg-white/5 rounded border border-white/10">uniswap</span>
+                <span className="px-2 py-1 bg-white/5 rounded border border-white/10 hover:border-trust-100/50 cursor-pointer transition-colors">Test: vitalik.eth</span>
+                <span className="px-2 py-1 bg-white/5 rounded border border-white/10 hover:border-trust-100/50 cursor-pointer transition-colors">Test: Malitious Contract</span>
+                <span className="px-2 py-1 bg-white/5 rounded border border-white/10 hover:border-trust-100/50 cursor-pointer transition-colors">Test: Uniswap V3</span>
               </div>
             </div>
           </div>

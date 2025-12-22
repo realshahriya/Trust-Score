@@ -1,61 +1,51 @@
-import { ShieldCheck, ShieldAlert, BadgeHelp } from "lucide-react";
-import { TrustGauge } from "@/components/TrustGauge";
+import { ShieldCheck, ShieldAlert, BadgeHelp, CheckCircle, XCircle, ArrowUpRight } from "lucide-react";
 import { useState, useEffect } from "react";
 
-interface ActivityItem {
-    id: string;
-    type: 'wallet' | 'contract' | 'nft' | 'token';
-    score: number;
+interface LogItem {
+    endpoint: string;
+    method: 'GET' | 'POST';
+    status: number;
+    latency: string;
     timestamp: string;
-    status: 'safe' | 'risk' | 'warning';
+    riskScore?: number;
 }
 
-// Helper to generate random activity
-function generateRandomActivity(): ActivityItem[] {
-    const types: ActivityItem['type'][] = ['wallet', 'contract', 'nft', 'token'];
-    const names = [
-        "Uniswap V3", "Tether USD", "Vitalik.eth", "Pepe", "0x892...Bad1",
-        "Tornado Cash", "BoredApe #8821", "USDC", "Lido: stETH", "Arbitrum Bridge",
-        "0x420...69", "OpenSea Registry", "Compound", "Aave V3", "MakerDAO"
+// Helper to generate random logs
+function generateRandomLogs(): LogItem[] {
+    const endpoints = [
+        "/v1/trust-score", "/v1/scan/contract", "/v1/scan/wallet", "/v1/monitor/add"
     ];
 
     return Array.from({ length: 15 }).map((_, i) => {
-        const type = types[Math.floor(Math.random() * types.length)];
-        const score = Math.floor(Math.random() * 100);
-        let status: ActivityItem['status'] = 'safe';
-
-        if (score < 50) status = 'risk';
-        else if (score < 80) status = 'warning';
+        const isSuccess = Math.random() > 0.05;
+        const method: 'GET' | 'POST' = Math.random() > 0.7 ? 'POST' : 'GET';
 
         return {
-            id: names[Math.floor(Math.random() * names.length)], // Mix of real names + random helps realism
-            type,
-            score,
+            endpoint: endpoints[Math.floor(Math.random() * endpoints.length)],
+            method,
+            status: isSuccess ? 200 : 429,
+            latency: `${Math.floor(Math.random() * 150) + 20}ms`,
             timestamp: `${Math.floor(Math.random() * 59) + 1}s ago`,
-            status
+            riskScore: isSuccess ? Math.floor(Math.random() * 100) : undefined
         };
-    }).sort((a, b) => parseInt(a.timestamp) - parseInt(b.timestamp)); // Sort by time (faked)
+    }).sort((a, b) => parseInt(a.timestamp) - parseInt(b.timestamp));
 }
 
 export function RecentActivity() {
-    const [activity, setActivity] = useState<ActivityItem[]>([]);
+    const [logs, setLogs] = useState<LogItem[]>([]);
 
     useEffect(() => {
-        // Generate random activity on mount (client-side only to avoid hydration mismatch)
-        setActivity(generateRandomActivity());
-
-        // Optional: Add strict real-time updates? 
-        // For now, "random with every load" is satisfied by initial generation.
+        setLogs(generateRandomLogs());
     }, []);
 
-    if (activity.length === 0) return null; // Or skeleton
+    if (logs.length === 0) return null;
 
     return (
         <div className="bg-cyber-card border border-cyber-border rounded-xl flex flex-col h-full">
             <div className="p-4 border-b border-cyber-border flex justify-between items-center bg-black/20">
                 <h3 className="text-white font-bold flex items-center gap-2">
                     <ActivityIcon className="w-5 h-5 text-trust-100" />
-                    Live Validation Feed
+                    Live API Logs
                 </h3>
                 <span className="flex h-2 w-2 relative">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -63,34 +53,34 @@ export function RecentActivity() {
                 </span>
             </div>
 
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2">
-                {activity.map((item, i) => (
-                    <div key={i} className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/10 transition-colors group">
-                        <div className="flex items-center gap-4">
-                            <div className="scale-100 origin-center">
-                                <TrustGauge score={item.score} size={48} showLabel={false} />
-                            </div>
-                            <div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm font-medium text-zinc-200 group-hover:text-trust-100 transition-colors font-mono">
-                                        {item.id}
-                                    </span>
-                                    <span className={`text-[10px] px-1.5 py-0.5 rounded border uppercase ${item.type === 'wallet' ? 'border-blue-500/30 text-blue-400' :
-                                        item.type === 'contract' ? 'border-purple-500/30 text-purple-400' :
-                                            item.type === 'token' ? 'border-yellow-500/30 text-yellow-400' : 'border-pink-500/30 text-pink-400'
-                                        }`}>
-                                        {item.type}
-                                    </span>
-                                </div>
-                                <div className="text-xs text-zinc-500">{item.timestamp}</div>
-                            </div>
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
+                {logs.map((log, i) => (
+                    <div key={i} className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/10 transition-colors group text-sm">
+                        <div className="flex items-center gap-3">
+                            <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${log.method === 'GET' ? 'bg-blue-500/10 text-blue-400' : 'bg-green-500/10 text-green-400'}`}>
+                                {log.method}
+                            </span>
+                            <span className="font-mono text-zinc-300 group-hover:text-white transition-colors">
+                                {log.endpoint}
+                            </span>
                         </div>
 
-                        <div className="text-right">
-                            <StatusBadge status={item.status} />
+                        <div className="flex items-center gap-4 text-xs">
+                            <span className="text-zinc-500">{log.latency}</span>
+                            <div className="flex items-center gap-1.5 min-w-[60px] justify-end">
+                                <span className={log.status === 200 ? "text-green-500" : "text-red-500"}>
+                                    {log.status}
+                                </span>
+                                {log.status === 200 ? <CheckCircle className="w-3 h-3 text-green-500" /> : <XCircle className="w-3 h-3 text-red-500" />}
+                            </div>
                         </div>
                     </div>
                 ))}
+            </div>
+            <div className="p-3 border-t border-cyber-border bg-black/20 text-center">
+                <button className="text-xs text-trust-100 hover:text-white flex items-center justify-center gap-1 w-full transition-colors">
+                    View Full Logs <ArrowUpRight className="w-3 h-3" />
+                </button>
             </div>
         </div>
     );
@@ -114,10 +104,4 @@ function ActivityIcon(props: any) {
             <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
         </svg>
     )
-}
-
-function StatusBadge({ status }: { status: string }) {
-    if (status === 'safe') return <ShieldCheck className="w-5 h-5 text-green-500" />;
-    if (status === 'risk') return <ShieldAlert className="w-5 h-5 text-red-500" />;
-    return <BadgeHelp className="w-5 h-5 text-yellow-500" />;
 }

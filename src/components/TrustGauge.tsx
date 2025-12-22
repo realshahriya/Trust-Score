@@ -7,9 +7,11 @@ interface TrustGaugeProps {
     score: number; // 0 to 100
     size?: number;
     showLabel?: boolean;
+    safeThreshold?: number;
+    riskThreshold?: number;
 }
 
-export function TrustGauge({ score, size = 200, showLabel = true }: TrustGaugeProps) {
+export function TrustGauge({ score, size = 200, showLabel = true, safeThreshold = 80, riskThreshold = 50 }: TrustGaugeProps) {
     const [displayScore, setDisplayScore] = useState(0);
 
     // Animate the number counting up
@@ -35,18 +37,34 @@ export function TrustGauge({ score, size = 200, showLabel = true }: TrustGaugePr
 
     // Determine color based on score
     const getColor = (s: number) => {
-        if (s >= 80) return "text-trust-100"; // Green
-        if (s >= 50) return "text-yellow-500"; // Amber
+        if (s >= safeThreshold) return "text-trust-100"; // Green
+        if (s >= riskThreshold) return "text-yellow-500"; // Amber
         return "text-red-500"; // Red
     };
 
-    const strokeColor = score >= 80 ? "#00ff9d" : score >= 50 ? "#eab308" : "#ef4444";
+    const strokeColor = score >= safeThreshold ? "#00ff9d" : score >= riskThreshold ? "#eab308" : "#ef4444";
 
     // SVG Config
+    // SVG Config
     const strokeWidth = size < 100 ? 5 : 15; // Thinner stroke for small sizes
-    const radius = (size - strokeWidth) / 2;
+    const padding = 40; // Increased padding to prevent any shadow clipping
+    const radius = (size - strokeWidth - padding) / 2;
     const circumference = radius * 2 * Math.PI;
     const offset = circumference - (score / 100) * circumference;
+
+    const navColor = score >= safeThreshold
+        ? "rgb(0, 255, 157)"
+        : score >= riskThreshold
+            ? "rgb(234, 179, 8)"
+            : "rgb(239, 68, 68)";
+
+    const shadowColor = score >= safeThreshold
+        ? "rgba(0, 255, 157, 0.4)"
+        : score >= riskThreshold
+            ? "rgba(234, 179, 8, 0.4)"
+            : "rgba(239, 68, 68, 0.4)";
+
+    const currentState = score >= safeThreshold ? 'safe' : score >= riskThreshold ? 'risk' : 'danger';
 
     return (
         <div className="relative flex flex-col items-center justify-center" style={{ width: size, height: size }}>
@@ -63,29 +81,35 @@ export function TrustGauge({ score, size = 200, showLabel = true }: TrustGaugePr
                 />
                 {/* Progress Circle */}
                 <motion.circle
-                    initial={{ strokeDashoffset: circumference }}
-                    animate={{ strokeDashoffset: offset }}
+                    key={currentState}
+                    initial={{ stroke: navColor, filter: `drop-shadow(0px 0px 10px ${shadowColor})` }}
+                    animate={{
+                        strokeDashoffset: offset,
+                        stroke: navColor,
+                        filter: `drop-shadow(0px 0px 10px ${shadowColor})`
+                    }}
                     transition={{ duration: 1.5, ease: "easeOut" }}
                     cx={size / 2}
                     cy={size / 2}
                     r={radius}
-                    stroke={strokeColor}
                     strokeWidth={strokeWidth}
                     fill="transparent"
                     strokeDasharray={circumference}
                     strokeLinecap="round"
-                    className="drop-shadow-[0_0_10px_rgba(0,255,157,0.3)]"
                 />
             </svg>
 
             {/* Score Text */}
             <div className="flex flex-col items-center z-10" style={{ transform: `scale(${size / 200})` }}>
-                {/* 
-                    Using a scale transform is smoother for arbitrary sizes than breakpoints 
+                {/*
+                    Using a scale transform is smoother for arbitrary sizes than breakpoints
                     Base size is 200px, so we scale relative to that.
                  */}
                 <div className="flex flex-col items-center justify-center">
-                    <span className={`text-5xl font-bold tracking-tighter ${getColor(score)} drop-shadow-md`}>
+                    <span
+                        className={`text-5xl font-bold tracking-tighter ${getColor(score)} transition-colors duration-300`}
+                        style={{ textShadow: `0 0 20px ${shadowColor}` }}
+                    >
                         {displayScore}
                     </span>
                     {showLabel && (
@@ -93,11 +117,6 @@ export function TrustGauge({ score, size = 200, showLabel = true }: TrustGaugePr
                     )}
                 </div>
             </div>
-
-            {/* Decorative pulse ring for high scores */}
-            {score >= 80 && size > 60 && (
-                <div className="absolute inset-0 rounded-full border border-trust-100/20 animate-ping opacity-20" />
-            )}
         </div>
     );
 }
