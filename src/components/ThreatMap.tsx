@@ -129,7 +129,7 @@ export function ThreatMap() {
     }, []);
 
     return (
-        <div className="w-full h-full relative bg-black/40 rounded-xl overflow-hidden border border-cyber-border group">
+        <div className="w-full h-full relative bg-black/40 rounded-xl overflow-hidden border border-white/10 group">
             <canvas ref={canvasRef} className="block" />
 
             {/* Overlay UI */}
@@ -145,7 +145,7 @@ export function ThreatMap() {
             </div>
 
             <div className="absolute bottom-4 right-4 pointer-events-none text-right">
-                <div className="text-xs font-mono text-trust-100">
+                <div className="text-xs font-mono text-neon">
                     <span className="text-zinc-500">Nodes Active:</span> 8421
                 </div>
                 <div className="text-xs font-mono text-red-400">

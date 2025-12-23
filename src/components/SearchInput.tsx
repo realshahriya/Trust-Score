@@ -39,9 +39,9 @@ export function SearchInput({
 
     return (
         <form onSubmit={handleSubmit} className={twMerge("relative group", className)}>
-            {!compact && <div className="absolute -inset-0.5 bg-gradient-to-r from-trust-100 to-blue-600 rounded-lg blur opacity-30 group-focus-within:opacity-75 transition duration-500"></div>}
+            {!compact && <div className="absolute -inset-0.5 bg-gradient-to-r from-neon to-blue-600 rounded-lg blur opacity-30 group-focus-within:opacity-75 transition duration-500"></div>}
             <div className={twMerge(
-                "relative flex items-center bg-cyber-card rounded-lg border border-cyber-border ring-1 ring-white/10 group-focus-within:ring-trust-100/50",
+                "relative flex items-center bg-surface rounded-lg border border-white/10 ring-1 ring-white/10 group-focus-within:ring-neon/50",
                 compact ? "py-0 bg-transparent border-transparent ring-0" : ""
             )}>
                 {/* Chain Selector */}
@@ -52,25 +52,25 @@ export function SearchInput({
                             onChange={(e) => setChain(e.target.value)}
                             className="bg-transparent text-sm font-medium text-zinc-300 focus:outline-none py-4 px-2 cursor-pointer hover:text-white"
                         >
-                            <option value="1" className="bg-cyber-card text-zinc-300">Ethereum</option>
-                            <option value="56" className="bg-cyber-card text-zinc-300">BNB Chain</option>
-                            <option value="137" className="bg-cyber-card text-zinc-300">Polygon</option>
-                            <option value="43114" className="bg-cyber-card text-zinc-300">Avalanche</option>
-                            <option value="42161" className="bg-cyber-card text-zinc-300">Arbitrum One</option>
-                            <option value="10" className="bg-cyber-card text-zinc-300">Optimism</option>
-                            <option value="8453" className="bg-cyber-card text-zinc-300">Base</option>
-                            <option value="324" className="bg-cyber-card text-zinc-300">zkSync Era</option>
-                            <option value="59144" className="bg-cyber-card text-zinc-300">Linea</option>
-                            <option value="534352" className="bg-cyber-card text-zinc-300">Scroll</option>
-                            <option value="81457" className="bg-cyber-card text-zinc-300">Blast</option>
-                            <option value="250" className="bg-cyber-card text-zinc-300">Fantom</option>
-                            <option value="25" className="bg-cyber-card text-zinc-300">Cronos</option>
-                            <option value="100" className="bg-cyber-card text-zinc-300">Gnosis</option>
-                            <option value="1284" className="bg-cyber-card text-zinc-300">Moonbeam</option>
-                            <option value="1313161554" className="bg-cyber-card text-zinc-300">Aurora</option>
-                            <option value="42220" className="bg-cyber-card text-zinc-300">Celo</option>
-                            <option value="1088" className="bg-cyber-card text-zinc-300">Metis</option>
-                            <option value="5000" className="bg-cyber-card text-zinc-300">Mantle</option>
+                            <option value="1" className="bg-surface text-zinc-300">Ethereum</option>
+                            <option value="56" className="bg-surface text-zinc-300">BNB Chain</option>
+                            <option value="137" className="bg-surface text-zinc-300">Polygon</option>
+                            <option value="43114" className="bg-surface text-zinc-300">Avalanche</option>
+                            <option value="42161" className="bg-surface text-zinc-300">Arbitrum One</option>
+                            <option value="10" className="bg-surface text-zinc-300">Optimism</option>
+                            <option value="8453" className="bg-surface text-zinc-300">Base</option>
+                            <option value="324" className="bg-surface text-zinc-300">zkSync Era</option>
+                            <option value="59144" className="bg-surface text-zinc-300">Linea</option>
+                            <option value="534352" className="bg-surface text-zinc-300">Scroll</option>
+                            <option value="81457" className="bg-surface text-zinc-300">Blast</option>
+                            <option value="250" className="bg-surface text-zinc-300">Fantom</option>
+                            <option value="25" className="bg-surface text-zinc-300">Cronos</option>
+                            <option value="100" className="bg-surface text-zinc-300">Gnosis</option>
+                            <option value="1284" className="bg-surface text-zinc-300">Moonbeam</option>
+                            <option value="1313161554" className="bg-surface text-zinc-300">Aurora</option>
+                            <option value="42220" className="bg-surface text-zinc-300">Celo</option>
+                            <option value="1088" className="bg-surface text-zinc-300">Metis</option>
+                            <option value="5000" className="bg-surface text-zinc-300">Mantle</option>
                         </select>
                     </div>
                 )}
@@ -97,7 +97,7 @@ export function SearchInput({
                         {isLoading ? (
                             <Loader2 className="w-5 h-5 animate-spin" />
                         ) : (
-                            <ArrowRight className="w-5 h-5 text-trust-100" />
+                            <ArrowRight className="w-5 h-5 text-neon" />
                         )}
                     </button>
                 )}

@@ -41,10 +41,10 @@ export function RecentActivity() {
     if (logs.length === 0) return null;
 
     return (
-        <div className="bg-cyber-card border border-cyber-border rounded-xl flex flex-col h-full">
-            <div className="p-4 border-b border-cyber-border flex justify-between items-center bg-black/20">
+        <div className="bg-surface border border-white/10 rounded-xl flex flex-col h-full">
+            <div className="p-4 border-b border-white/10 flex justify-between items-center bg-black/20">
                 <h3 className="text-white font-bold flex items-center gap-2">
-                    <ActivityIcon className="w-5 h-5 text-trust-100" />
+                    <ActivityIcon className="w-5 h-5 text-neon" />
                     Live API Logs
                 </h3>
                 <span className="flex h-2 w-2 relative">
@@ -77,8 +77,8 @@ export function RecentActivity() {
                     </div>
                 ))}
             </div>
-            <div className="p-3 border-t border-cyber-border bg-black/20 text-center">
-                <button className="text-xs text-trust-100 hover:text-white flex items-center justify-center gap-1 w-full transition-colors">
+            <div className="p-3 border-t border-white/10 bg-black/20 text-center">
+                <button className="text-xs text-neon hover:text-white flex items-center justify-center gap-1 w-full transition-colors">
                     View Full Logs <ArrowUpRight className="w-3 h-3" />
                 </button>
             </div>
