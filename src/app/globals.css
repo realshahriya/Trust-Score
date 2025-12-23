@@ -1,51 +1,83 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
 
-@theme {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  
-  /* Trust Score Colors */
-  --color-trust-100: #00ff9d; /* High Trust */
-  --color-trust-80: #00cc7a;
-  --color-trust-50: #00663d;
-  
-  --color-risk-high: #ff0055; /* Danger */
-  --color-risk-med: #ffaa00; /* Caution */
-  --color-risk-low: #00ff9d; /* Safe */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  --color-cyber-bg: #050505;
-  --color-cyber-card: #0a0a0a;
-  --color-cyber-border: #1f1f1f;
-  
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  
-  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
+@layer utilities {
+  .glass-panel {
+    background: rgba(10, 10, 10, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
 
-:root {
-  --background: #050505;
-  --foreground: #ededed;
+  .text-outline {
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
+    color: transparent;
+  }
+
+  .neon-border {
+    border: 1px solid #00F0FF;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.3), inset 0 0 10px rgba(0, 240, 255, 0.1);
+  }
+
+  .grid-bg {
+    background-image: linear-gradient(to right, #1a1a1a 1px, transparent 1px),
+      linear-gradient(to bottom, #1a1a1a 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+  }
+
+  .cursor-blink {
+    animation: blink 1s step-end infinite;
+  }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  font-family: 'Syne', sans-serif;
+  background: #030303;
+  color: #ffffff;
   overflow-x: hidden;
+  cursor: crosshair;
 }
 
-/* Custom Scrollbar for Cyber feel */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #0a0a0a; 
+  background: #030303;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #1f1f1f; 
-  border-radius: 4px;
+  background: #333333;
+  border-radius: 0px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #333; 
+  background: #00F0FF;
+}
+
+::selection {
+  background: rgba(0, 240, 255, 0.2);
+  color: #00F0FF;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
 }
