@@ -12,13 +12,14 @@ export default function Home() {
       {/* Welcome Section */}
       <div className="flex flex-col md:flex-row justify-between items-end gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Platform Overview</h1>
-          <p className="text-zinc-400">Real-time surveillance of the decentralized web.</p>
+          <h1 className="text-3xl font-bold text-white mb-2 font-sans">Platform Overview</h1>
+          <p className="text-zinc-400 font-mono text-sm">Real-time surveillance of the decentralized web.</p>
         </div>
 
         <div className="flex gap-3">
-          <button className="px-4 py-2 bg-trust-100 text-black font-bold rounded hover:bg-trust-100/90 transition-colors">
-            New Analysis
+          <button className="group relative px-6 py-3 bg-neon text-black font-mono font-bold hover:bg-white transition-colors">
+            <span className="relative z-10">New Analysis</span>
+            <div className="absolute inset-0 bg-white translate-x-1 translate-y-1 -z-10 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform border border-black"></div>
           </button>
         </div>
       </div>
@@ -65,17 +66,17 @@ export default function Home() {
         {/* Main Chart / Search Area */}
         <div className="lg:col-span-2 space-y-6">
           {/* API Test Console */}
-          <div className="bg-gradient-to-br from-cyber-card to-black border border-cyber-border rounded-xl p-8 flex flex-col items-center justify-center text-center space-y-6 relative overflow-hidden group">
-            <div className="absolute inset-0 bg-trust-100/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+          <div className="bg-gradient-to-br from-surface via-surface to-neon/5 border border-subtle rounded-xl p-8 flex flex-col items-center justify-center text-center space-y-6 relative overflow-hidden group hover:border-neon/30 transition-colors">
+            <div className="absolute inset-0 bg-neon/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
 
             <div className="relative z-10 max-w-lg w-full space-y-6">
               <div>
-                <h2 className="text-2xl font-bold text-white mb-2">Integration Debugger</h2>
-                <p className="text-zinc-400">Test your API keys and simulate trust score requests in real-time.</p>
+                <h2 className="text-2xl font-bold text-white mb-2 font-sans">Integration Debugger</h2>
+                <p className="text-zinc-400 font-mono text-sm">Test your API keys and simulate trust score requests in real-time.</p>
               </div>
 
               <div className="space-y-2">
-                <SearchInput className="shadow-2xl shadow-trust-100/10" placeholder="Enter endpoint or address to scan..." />
+                <SearchInput className="shadow-2xl shadow-neon/10" placeholder="Enter endpoint or address to scan..." />
                 <div className="flex justify-between text-xs text-zinc-500 font-mono">
                   <span>POST /v1/scan</span>
                   <span>Latency: 24ms</span>
@@ -83,9 +84,9 @@ export default function Home() {
               </div>
 
               <div className="flex flex-wrap justify-center gap-2 text-xs text-zinc-500">
-                <span className="px-2 py-1 bg-white/5 rounded border border-white/10 hover:border-trust-100/50 cursor-pointer transition-colors">Test: vitalik.eth</span>
-                <span className="px-2 py-1 bg-white/5 rounded border border-white/10 hover:border-trust-100/50 cursor-pointer transition-colors">Test: Malitious Contract</span>
-                <span className="px-2 py-1 bg-white/5 rounded border border-white/10 hover:border-trust-100/50 cursor-pointer transition-colors">Test: Uniswap V3</span>
+                <span className="px-2 py-1 bg-white/5 rounded border border-white/10 hover:border-neon/50 cursor-pointer transition-colors">Test: vitalik.eth</span>
+                <span className="px-2 py-1 bg-white/5 rounded border border-white/10 hover:border-neon/50 cursor-pointer transition-colors">Test: Malitious Contract</span>
+                <span className="px-2 py-1 bg-white/5 rounded border border-white/10 hover:border-neon/50 cursor-pointer transition-colors">Test: Uniswap V3</span>
               </div>
             </div>
           </div>
