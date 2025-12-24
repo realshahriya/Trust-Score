@@ -45,7 +45,7 @@ export default function DesignSystemPage() {
                         <div>
                             <h4 className="text-lg font-bold text-white mb-4">Simulation Engine (Demo)</h4>
                             {/* Passing a Vitalik address and isContract=false for demo purposes */}
-                            <SimulationEngine address="0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045" isContract={false} />
+                            <SimulationEngine displayId="Vitalik Wallet" actualAddress="0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045" isContract={false} />
                         </div>
                     </div>
                 </div>

@@ -192,7 +192,7 @@ export default function SandboxPage() {
                         </h3>
                         <div className="opacity-90 hover:opacity-100 transition-opacity">
                             {/* Reusing the robust simulation component */}
-                            <SimulationEngine address="0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984" isContract={true} />
+                            <SimulationEngine displayId="UNI Token" actualAddress="0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984" isContract={true} />
                         </div>
                     </div>
 

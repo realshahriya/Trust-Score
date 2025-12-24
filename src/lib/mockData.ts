@@ -3,6 +3,7 @@ export type ScoreHistoryPoint = { date: string; score: number };
 
 export interface EntityData {
     id: string;
+    address: string; // The actual Ethereum address
     type: 'wallet' | 'contract' | 'nft' | 'token';
     score: number;
     label: 'Safe' | 'Caution' | 'High Risk';
@@ -23,6 +24,7 @@ export const MOCK_DB: Record<string, EntityData> = {
     // Scenario 1: High Trust Wallet
     "vitalik.eth": {
         id: "vitalik.eth (0xAb5...123)",
+        address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
         type: 'wallet',
         score: 98,
         label: 'Safe',
@@ -43,6 +45,7 @@ export const MOCK_DB: Record<string, EntityData> = {
     // Scenario 2: Rug Pull Contract
     "0xBadContract": {
         id: "0x892...Bad1 (DeFi_Yield_V2)",
+        address: "0x892345678901234567890123456789012345Bad1",
         type: 'contract',
         score: 12,
         label: 'High Risk',
@@ -63,6 +66,7 @@ export const MOCK_DB: Record<string, EntityData> = {
     // Scenario 3: Fake NFT
     "bored_ape_6969": {
         id: "Bored Ape #6969 (Unverified Collection)",
+        address: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
         type: 'nft',
         score: 45,
         label: 'Caution',
@@ -93,6 +97,7 @@ export function getAnalysis(query: string): EntityData {
     const randomScore = Math.floor(Math.random() * 40) + 40;
     return {
         id: query,
+        address: query.startsWith('0x') ? query : '0x0000000000000000000000000000000000000000',
         type: 'wallet',
         score: randomScore,
         label: randomScore > 70 ? 'Safe' : 'Caution',

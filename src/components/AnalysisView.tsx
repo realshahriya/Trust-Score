@@ -226,7 +226,7 @@ export default function AnalysisView() {
                     </div>
 
                     {/* Transaction Simulator */}
-                    <SimulationEngine address={data.id} isContract={data.type === 'contract' || data.type === 'token'} />
+                    <SimulationEngine displayId={data.id} actualAddress={data.address} isContract={data.type === 'contract' || data.type === 'token'} />
 
                     {/* Social Sentiment Chart */}
                     <SocialSentiment data={data.sentiment} />

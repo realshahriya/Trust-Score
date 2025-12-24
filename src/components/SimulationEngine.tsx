@@ -23,45 +23,80 @@ interface SimulationResult {
     error?: string;
 }
 
-export function SimulationEngine({ address, isContract }: { address: string, isContract: boolean }) {
+export function SimulationEngine({ displayId, actualAddress, isContract }: { displayId: string, actualAddress: string, isContract: boolean }) {
     const [simulating, setSimulating] = useState(false);
     const [result, setResult] = useState<SimulationResult | null>(null);
+
+    // Extract actual address from displayId if actualAddress not provided
+    // Format can be "Name (0x...)" or just "0x..."
+    const getCleanAddress = (): string | null => {
+        if (actualAddress && actualAddress.startsWith('0x')) {
+            return actualAddress;
+        }
+
+        // Try to extract from displayId format like "Tether USD (USDT)" with address stored elsewhere
+        // or "0xABC..." direct format
+        const match = displayId.match(/\((0x[a-fA-F0-9]{40})\)/);
+        if (match) {
+            return match[1];
+        }
+
+        if (displayId.startsWith('0x')) {
+            return displayId;
+        }
+
+        return null;
+    };
 
     const runSimulation = async () => {
         setSimulating(true);
         setResult(null);
 
         try {
-            // Import dynamically to avoid server-side issues if any
-            const { simulateTransaction } = await import('@/lib/blockchain');
+            const cleanAddr = getCleanAddress();
 
-            // Use current URL params to get chainId if possible, defaulting to 1 for demo
-            // In a real app we'd pass chainId as prop
-            const urlParams = new URLSearchParams(window.location.search);
-            const chainId = urlParams.get('chain') || '1';
+            if (!cleanAddr) {
+                setResult({
+                    success: false,
+                    gasUsed: 0,
+                    gasLimit: 0,
+                    stateChanges: [],
+                    logs: [],
+                    security: { isHoneypot: false, hasTransferTax: false, canPause: false },
+                    error: `Invalid address format. Cannot simulate transaction for "${displayId}".`
+                });
+                setSimulating(false);
+                return;
+            }
 
-            const simData = await simulateTransaction(address, chainId, "0");
+            // VIRTUAL SIMULATION - No real blockchain interaction
+            // Simulate processing time for realism
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // Generate realistic mock data based on contract type
+            const gasUsed = isContract
+                ? Math.floor(45000 + Math.random() * 30000)  // Contracts: 45k-75k gas
+                : Math.floor(21000 + Math.random() * 10000); // EOAs: 21k-31k gas
 
             const mockResult: SimulationResult = {
-                success: simData.success,
-                gasUsed: simData.gasUsed,
-                gasLimit: Math.floor(simData.gasUsed * 1.2), // Buffer
-                stateChanges: simData.success ? [
+                success: true, // Always succeed in virtual mode
+                gasUsed: gasUsed,
+                gasLimit: Math.floor(gasUsed * 1.2), // 20% buffer
+                stateChanges: [
                     {
                         asset: "ETH",
-                        from: "Simulated Sender",
-                        to: address,
+                        from: "Virtual Sender",
+                        to: cleanAddr.substring(0, 6) + "..." + cleanAddr.substring(38),
                         amount: "0.00"
                     }
-                ] : [],
+                ],
                 logs: [],
                 security: {
-                    isHoneypot: false, // Cannot verify via simple RPC
+                    isHoneypot: false,
                     hasTransferTax: false,
                     taxPercent: 0,
                     canPause: false
-                },
-                error: simData.error
+                }
             };
 
             setResult(mockResult);

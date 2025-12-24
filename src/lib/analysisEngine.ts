@@ -27,6 +27,7 @@ export async function analyzeEntity(input: string, chainId: string = '1'): Promi
 
         return {
             id: `${token.name} (${token.symbol})`,
+            address: chainData.address,
             type: 'token',
             score: token.score,
             label: 'Safe',
@@ -119,6 +120,7 @@ export async function analyzeEntity(input: string, chainId: string = '1'): Promi
 
     return {
         id: entityName,
+        address: chainData.address,
         type: detectedType,
         score: finalScore,
         label,
