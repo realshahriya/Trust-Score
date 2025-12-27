@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Database, CreditCard, BookOpen, Settings, Menu, Palette, Box } from "lucide-react";
+import { LayoutDashboard, Menu, Box } from "lucide-react";
 import { useState } from "react";
 
 export function Sidebar() {
@@ -11,12 +11,7 @@ export function Sidebar() {
 
     const links = [
         { name: "Overview", href: "/", icon: LayoutDashboard },
-        { name: "Sandbox", href: "/sandbox", icon: Box },
-        { name: "API Keys", href: "/api-keys", icon: Database },
-        { name: "Billing & Plans", href: "/billing", icon: CreditCard },
-        { name: "API Reference", href: "/api-docs", icon: BookOpen },
-        { name: "Settings", href: "/settings", icon: Settings },
-        { name: "System Design", href: "/design-system", icon: Palette },
+        { name: "Playground", href: "/playground", icon: Box },
     ];
 
     return (
@@ -38,7 +33,7 @@ export function Sidebar() {
                     <div className="h-16 flex items-center px-6 border-b border-subtle bg-gradient-to-r from-neon/5 to-transparent">
                         <img src="/logo.png" alt="Cencera Logo" className="w-8 h-8 mr-3" />
                         <span className="text-xl font-bold tracking-tight text-white font-sans">
-                            CENCERA<span className="text-neon">.io</span>
+                            CENCERA
                         </span>
                     </div>
 
@@ -70,7 +65,7 @@ export function Sidebar() {
                     {/* Footer */}
                     <div className="p-4 border-t border-subtle bg-black/20">
                         <div className="text-xs text-zinc-500 text-center font-mono">
-                            v1.0.0 Alpha
+                            version: prototype
                         </div>
                     </div>
                 </div>
