@@ -11,7 +11,7 @@ export function Sidebar() {
 
     const links = [
         { name: "Overview", href: "/", icon: LayoutDashboard },
-        { name: "Playground", href: "/playground", icon: Box },
+        { name: "Demo", href: "/demo", icon: Box },
     ];
 
     return (

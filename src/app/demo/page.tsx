@@ -4,10 +4,10 @@ import { useState } from "react";
 import {
     Wallet, Coins, ArrowDownUp, Settings, Copy, Send, Download,
     History, Layers, Eye, EyeOff, QrCode, ArrowUpRight, Clock,
-    Shield, Bell, Globe, Key, Trash2, ExternalLink, TrendingUp, AlertCircle, X, CheckCircle
+    Shield, ExternalLink, AlertCircle, X, CheckCircle, AlertTriangle, ShieldAlert, Zap
 } from "lucide-react";
 
-type AnalysisType = "wallet" | "defi";
+type AnalysisType = "wallet" | "defi" | "interceptor";
 type WalletTab = "tokens" | "send" | "receive" | "history";
 type TokenData = {
     symbol: string;
@@ -41,6 +41,8 @@ export default function PlaygroundPage() {
     const [showRiskySiteInterceptor, setShowRiskySiteInterceptor] = useState(false);
     const [showSuspiciousTxInterceptor, setShowSuspiciousTxInterceptor] = useState(false);
     const [showMaliciousContractInterceptor, setShowMaliciousContractInterceptor] = useState(false);
+    const [showCombinationThreatInterceptor, setShowCombinationThreatInterceptor] = useState(false);
+    const [showReportSuccess, setShowReportSuccess] = useState(false);
 
     const walletTrustScore = 92;
 
@@ -131,20 +133,37 @@ export default function PlaygroundPage() {
     };
 
     return (
-        <div className="p-6 space-y-8">
+        <div className="p-4 sm:p-6 space-y-6 sm:space-y-8">
             <div>
-                <h1 className="text-3xl font-bold text-white mb-2 font-sans">Playground</h1>
-                <p className="text-zinc-400 font-mono text-sm">Interactive demos with CENCERA trust intelligence.</p>
+                <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 font-sans">Playground</h1>
+                <p className="text-zinc-400 font-mono text-xs sm:text-sm">Interactive demos with CENCERA trust intelligence.</p>
             </div>
 
-            <div className="flex gap-4 border-b border-subtle">
-                <button onClick={() => setActiveTab("wallet")} className={`flex items-center gap-2 px-6 py-3 font-mono font-semibold transition-all relative ${activeTab === "wallet" ? "text-neon border-b-2 border-neon" : "text-zinc-400 hover:text-white"}`}>
-                    <Wallet className="w-5 h-5" />Wallet Demo
+            {/* Info Banner */}
+            <div className="bg-neon/10 border border-neon/30 rounded-lg p-4 mb-6">
+                <div className="flex items-start gap-3">
+                    <Shield className="w-5 h-5 text-neon flex-shrink-0 mt-0.5" />
+                    <div>
+                        <div className="text-sm font-mono font-bold text-neon mb-1">Interactive Demo (Mock Only)</div>
+                        <div className="text-xs text-zinc-300 font-mono">
+                            This entire demo page is a mock demonstration with no real wallet connections or transactions. Explore how CENCERA's trust scores will be usable for everyone across wallets, DeFi transactions, and real-time threat detection.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 border-b border-subtle overflow-x-auto">
+                <button onClick={() => setActiveTab("wallet")} className={`flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 font-mono font-semibold transition-all relative text-sm sm:text-base whitespace-nowrap ${activeTab === "wallet" ? "text-neon border-b-2 border-neon" : "text-zinc-400 hover:text-white"}`}>
+                    <Wallet className="w-4 h-4 sm:w-5 sm:h-5" /><span className="hidden sm:inline">Wallet Demo</span><span className="sm:hidden">Wallet</span>
                     {activeTab === "wallet" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-neon shadow-[0_0_10px_rgba(0,240,255,0.5)]" />}
                 </button>
-                <button onClick={() => setActiveTab("defi")} className={`flex items-center gap-2 px-6 py-3 font-mono font-semibold transition-all relative ${activeTab === "defi" ? "text-neon border-b-2 border-neon" : "text-zinc-400 hover:text-white"}`}>
-                    <Coins className="w-5 h-5" />DEX Demo
+                <button onClick={() => setActiveTab("defi")} className={`flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 font-mono font-semibold transition-all relative text-sm sm:text-base whitespace-nowrap ${activeTab === "defi" ? "text-neon border-b-2 border-neon" : "text-zinc-400 hover:text-white"}`}>
+                    <Coins className="w-4 h-4 sm:w-5 sm:h-5" /><span className="hidden sm:inline">DEX Demo</span><span className="sm:hidden">DEX</span>
                     {activeTab === "defi" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-neon shadow-[0_0_10px_rgba(0,240,255,0.5)]" />}
+                </button>
+                <button onClick={() => setActiveTab("interceptor")} className={`flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 font-mono font-semibold transition-all relative text-sm sm:text-base whitespace-nowrap ${activeTab === "interceptor" ? "text-red-400 border-b-2 border-red-400" : "text-zinc-400 hover:text-white"}`}>
+                    <Shield className="w-4 h-4 sm:w-5 sm:h-5" /><span className="hidden sm:inline">Interceptor Demo</span><span className="sm:hidden">Interceptor</span>
+                    {activeTab === "interceptor" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-400 shadow-[0_0_10px_rgba(248,113,113,0.5)]" />}
                 </button>
             </div>
 
@@ -507,32 +526,219 @@ export default function PlaygroundPage() {
                     </div>
                 )}
 
-                {/* Interceptor Demo Triggers */}
-                <div className="fixed bottom-6 right-6 z-40">
-                    <div className="bg-surface border border-subtle rounded-xl p-4 shadow-2xl">
-                        <div className="text-xs font-mono font-bold text-white mb-3">🛡️ CENCERA Interceptor Demos</div>
-                        <div className="space-y-2">
+                {activeTab === "interceptor" && (
+                    <div className="max-w-6xl mx-auto">
+                        <div className="bg-gradient-to-br from-surface via-surface to-red-500/5 border border-subtle rounded-xl p-8 mb-8">
+                            <div className="flex items-center gap-4 mb-6">
+                                <div className="w-16 h-16 rounded-full bg-red-500/20 border-2 border-red-500 flex items-center justify-center">
+                                    <Shield className="w-8 h-8 text-red-400" />
+                                </div>
+                                <div>
+                                    <h2 className="text-3xl font-bold text-white font-sans">CENCERA Interceptor System</h2>
+                                    <p className="text-zinc-400 font-mono text-sm mt-1">Real-time AI-powered threat detection and prevention</p>
+                                </div>
+                            </div>
+                            <p className="text-zinc-300 font-mono text-sm">
+                                CENCERA's interceptor system monitors all blockchain interactions in real-time,
+                                analyzing trust scores, detecting threats, and preventing malicious transactions before they execute.
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                            {/* Risky Site Connection */}
+                            <div className="bg-surface border-2 border-red-500/30 rounded-xl p-6 hover:border-red-500/50 transition-all">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-12 h-12 rounded-full bg-red-500/20 border border-red-500 flex items-center justify-center">
+                                        <AlertCircle className="w-6 h-6 text-red-400 animate-pulse" />
+                                    </div>
+                                    <div className="px-3 py-1 bg-red-500/20 border border-red-500 rounded-lg">
+                                        <span className="text-xl font-mono font-bold text-red-400">28/100</span>
+                                    </div>
+                                </div>
+                                <h3 className="text-xl font-bold text-white font-sans mb-2">Risky Site Connection</h3>
+                                <p className="text-sm text-zinc-400 font-mono mb-4">
+                                    Phishing attempt detected. Domain mimics legitimate DeFi protocol.
+                                </p>
+                                <div className="space-y-2 mb-6">
+                                    <div className="flex items-start gap-2 text-xs">
+                                        <X className="w-3 h-3 text-red-400 flex-shrink-0 mt-0.5" />
+                                        <span className="text-red-300 font-mono">Domain registered 3 days ago</span>
+                                    </div>
+                                    <div className="flex items-start gap-2 text-xs">
+                                        <X className="w-3 h-3 text-red-400 flex-shrink-0 mt-0.5" />
+                                        <span className="text-red-300 font-mono">No verified smart contracts</span>
+                                    </div>
+                                    <div className="flex items-start gap-2 text-xs">
+                                        <X className="w-3 h-3 text-red-400 flex-shrink-0 mt-0.5" />
+                                        <span className="text-red-300 font-mono">Unusual permission requests</span>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => setShowRiskySiteInterceptor(true)}
+                                    className="w-full px-4 py-3 bg-red-500 text-white font-mono font-bold rounded-lg hover:bg-red-600 transition-colors"
+                                >
+                                    ⚠️ Trigger Alert
+                                </button>
+                            </div>
+
+                            {/* Suspicious Transaction */}
+                            <div className="bg-surface border-2 border-yellow-500/30 rounded-xl p-6 hover:border-yellow-500/50 transition-all">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-12 h-12 rounded-full bg-yellow-500/20 border border-yellow-500 flex items-center justify-center">
+                                        <AlertCircle className="w-6 h-6 text-yellow-400" />
+                                    </div>
+                                    <div className="px-3 py-1 bg-yellow-500/20 border border-yellow-500 rounded-lg">
+                                        <span className="text-xl font-mono font-bold text-yellow-400">45/100</span>
+                                    </div>
+                                </div>
+                                <h3 className="text-xl font-bold text-white font-sans mb-2">Suspicious Transaction</h3>
+                                <p className="text-sm text-zinc-400 font-mono mb-4">
+                                    High-value transfer to address with limited history.
+                                </p>
+                                <div className="space-y-2 mb-6">
+                                    <div className="flex items-start gap-2 text-xs">
+                                        <AlertCircle className="w-3 h-3 text-yellow-400 flex-shrink-0 mt-0.5" />
+                                        <span className="text-zinc-300 font-mono">Limited transaction history</span>
+                                    </div>
+                                    <div className="flex items-start gap-2 text-xs">
+                                        <AlertCircle className="w-3 h-3 text-yellow-400 flex-shrink-0 mt-0.5" />
+                                        <span className="text-zinc-300 font-mono">First-time high-value transfer</span>
+                                    </div>
+                                    <div className="flex items-start gap-2 text-xs">
+                                        <AlertCircle className="w-3 h-3 text-yellow-400 flex-shrink-0 mt-0.5" />
+                                        <span className="text-zinc-300 font-mono">Address flagged in 2 reports</span>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => setShowSuspiciousTxInterceptor(true)}
+                                    className="w-full px-4 py-3 bg-yellow-500 text-black font-mono font-bold rounded-lg hover:bg-yellow-400 transition-colors"
+                                >
+                                    ⚡ Trigger Warning
+                                </button>
+                            </div>
+
+                            {/* Malicious Contract */}
+                            <div className="bg-surface border-2 border-red-500/30 rounded-xl p-6 hover:border-red-500/50 transition-all">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-12 h-12 rounded-full bg-red-500/20 border border-red-500 flex items-center justify-center animate-pulse">
+                                        <AlertCircle className="w-6 h-6 text-red-400" />
+                                    </div>
+                                    <div className="px-3 py-1 bg-red-500/20 border border-red-500 rounded-lg animate-pulse">
+                                        <span className="text-xl font-mono font-bold text-red-400">12/100</span>
+                                    </div>
+                                </div>
+                                <h3 className="text-xl font-bold text-white font-sans mb-2">Malicious Contract</h3>
+                                <p className="text-sm text-zinc-400 font-mono mb-4">
+                                    CRITICAL: Drainer contract detected. DO NOT INTERACT.
+                                </p>
+                                <div className="space-y-2 mb-6">
+                                    <div className="flex items-start gap-2 text-xs">
+                                        <X className="w-3 h-3 text-red-400 flex-shrink-0 mt-0.5" />
+                                        <span className="text-red-200 font-mono font-bold">Unverified source code</span>
+                                    </div>
+                                    <div className="flex items-start gap-2 text-xs">
+                                        <X className="w-3 h-3 text-red-400 flex-shrink-0 mt-0.5" />
+                                        <span className="text-red-200 font-mono font-bold">Malicious drainer detected</span>
+                                    </div>
+                                    <div className="flex items-start gap-2 text-xs">
+                                        <X className="w-3 h-3 text-red-400 flex-shrink-0 mt-0.5" />
+                                        <span className="text-red-200 font-mono font-bold">157 victim reports</span>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => setShowMaliciousContractInterceptor(true)}
+                                    className="w-full px-4 py-3 bg-red-500 text-white font-mono font-bold rounded-lg hover:bg-red-600 transition-colors animate-pulse"
+                                >
+                                    🚨 Trigger Block
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Combination Threat */}
+                        <div className="mt-6 bg-gradient-to-br from-red-500/10 via-orange-500/10 to-yellow-500/10 border-2 border-red-500/50 rounded-xl p-4 sm:p-6">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
+                                <div className="relative">
+                                    <div className="w-12 h-12 rounded-full bg-red-500/20 border-2 border-red-500 flex items-center justify-center animate-pulse">
+                                        <AlertCircle className="w-6 h-6 text-red-400" />
+                                    </div>
+                                    <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-orange-500 border-2 border-surface flex items-center justify-center">
+                                        <span className="text-xs font-bold text-white">3</span>
+                                    </div>
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-lg sm:text-xl font-bold text-white font-sans">Multiple Threats Detected</h3>
+                                    <p className="text-xs sm:text-sm text-zinc-400 font-mono">Combination attack scenario</p>
+                                </div>
+                                <div className="px-3 py-1 bg-red-500/20 border-2 border-red-500 rounded-lg animate-pulse">
+                                    <span className="text-xl sm:text-2xl font-mono font-bold text-red-400">8/100</span>
+                                </div>
+                            </div>
+                            <p className="text-xs sm:text-sm text-zinc-300 font-mono mb-4">
+                                CENCERA detected a sophisticated multi-vector attack combining phishing site, suspicious contract, and malicious token approval.
+                            </p>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+                                <div className="p-3 bg-black/40 border border-red-500/30 rounded-lg">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <X className="w-4 h-4 text-red-400" />
+                                        <span className="text-xs font-mono font-bold text-red-400">Phishing Site</span>
+                                    </div>
+                                    <div className="text-xs text-zinc-400 font-mono">Fake DEX interface</div>
+                                </div>
+                                <div className="p-3 bg-black/40 border border-orange-500/30 rounded-lg">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <X className="w-4 h-4 text-orange-400" />
+                                        <span className="text-xs font-mono font-bold text-orange-400">Malicious Contract</span>
+                                    </div>
+                                    <div className="text-xs text-zinc-400 font-mono">Unlimited token drain</div>
+                                </div>
+                                <div className="p-3 bg-black/40 border border-yellow-500/30 rounded-lg">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <X className="w-4 h-4 text-yellow-400" />
+                                        <span className="text-xs font-mono font-bold text-yellow-400">Suspicious Recipient</span>
+                                    </div>
+                                    <div className="text-xs text-zinc-400 font-mono">Known scammer address</div>
+                                </div>
+                            </div>
                             <button
-                                onClick={() => setShowRiskySiteInterceptor(true)}
-                                className="w-full px-3 py-2 bg-red-500/10 border border-red-500/30 rounded text-red-400 text-xs font-mono hover:bg-red-500/20 transition-colors"
+                                onClick={() => setShowCombinationThreatInterceptor(true)}
+                                className="w-full px-6 py-4 bg-gradient-to-r from-red-500 to-orange-500 text-white font-mono font-bold rounded-lg hover:from-red-600 hover:to-orange-600 transition-all shadow-lg shadow-red-500/20"
                             >
-                                ⚠️ Risky Site Connection
-                            </button>
-                            <button
-                                onClick={() => setShowSuspiciousTxInterceptor(true)}
-                                className="w-full px-3 py-2 bg-yellow-500/10 border border-yellow-500/30 rounded text-yellow-400 text-xs font-mono hover:bg-yellow-500/20 transition-colors"
-                            >
-                                ⚡ Suspicious Transaction
-                            </button>
-                            <button
-                                onClick={() => setShowMaliciousContractInterceptor(true)}
-                                className="w-full px-3 py-2 bg-orange-500/10 border border-orange-500/30 rounded text-orange-400 text-xs font-mono hover:bg-orange-500/20 transition-colors"
-                            >
-                                🚨 Malicious Contract
+                                🚨 Trigger Multi-Threat Alert
                             </button>
                         </div>
+
+                        {/* How It Works */}
+                        <div className="mt-8 bg-surface border border-subtle rounded-xl p-4 sm:p-6">
+                            <h3 className="text-base sm:text-lg font-bold text-white mb-4 font-sans">How CENCERA Interceptor Works</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <div className="p-4 bg-black/20 rounded-lg">
+                                    <div className="text-neon font-mono font-bold mb-2">1. Monitor</div>
+                                    <div className="text-xs text-zinc-400 font-mono">
+                                        Track all blockchain interactions in real-time
+                                    </div>
+                                </div>
+                                <div className="p-4 bg-black/20 rounded-lg">
+                                    <div className="text-neon font-mono font-bold mb-2">2. Analyze</div>
+                                    <div className="text-xs text-zinc-400 font-mono">
+                                        AI evaluates trust scores and threat patterns
+                                    </div>
+                                </div>
+                                <div className="p-4 bg-black/20 rounded-lg">
+                                    <div className="text-neon font-mono font-bold mb-2">3. Intercept</div>
+                                    <div className="text-xs text-zinc-400 font-mono">
+                                        Block threats before transaction execution
+                                    </div>
+                                </div>
+                                <div className="p-4 bg-black/20 rounded-lg">
+                                    <div className="text-neon font-mono font-bold mb-2">4. Protect</div>
+                                    <div className="text-xs text-zinc-400 font-mono">
+                                        Prevent loss with actionable security insights
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {activeTab === "defi" && (
                     <div className="max-w-6xl mx-auto">
@@ -549,6 +755,16 @@ export default function PlaygroundPage() {
                                 >
                                     Connect Wallet
                                 </button>
+
+                                {/* Mock Disclaimer */}
+                                <div className="mt-6 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                                    <div className="flex items-start gap-2">
+                                        <AlertTriangle className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
+                                        <p className="text-xs text-yellow-300 font-mono">
+                                            Mock demo only - No real wallet connection or transactions
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -805,8 +1021,14 @@ export default function PlaygroundPage() {
 
             {/* Wallet Connection Modal */}
             {showWalletModal && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-surface border border-subtle rounded-xl max-w-md w-full relative">
+                <div
+                    className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4"
+                    onClick={() => setShowWalletModal(false)}
+                >
+                    <div
+                        className="bg-surface border border-subtle rounded-xl max-w-md w-full relative max-h-[85vh] overflow-y-auto"
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         <button
                             onClick={() => setShowWalletModal(false)}
                             className="absolute top-4 right-4 text-zinc-400 hover:text-white transition-colors z-10"
@@ -869,21 +1091,6 @@ export default function PlaygroundPage() {
                                 ))}
                             </div>
 
-                            {/* Permissions Info */}
-                            <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg mb-4">
-                                <div className="flex items-start gap-3">
-                                    <AlertCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
-                                    <div>
-                                        <div className="text-sm font-mono font-bold text-yellow-400 mb-2">Connection Permissions</div>
-                                        <div className="text-xs text-zinc-300 font-mono space-y-1">
-                                            <div>• View your wallet address and balance</div>
-                                            <div>• Request transaction approvals</div>
-                                            <div>• Suggest transactions to approve</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                             {/* Security Notice */}
                             <div className="p-4 bg-neon/10 border border-neon/30 rounded-lg">
                                 <div className="flex items-start gap-3">
@@ -891,7 +1098,7 @@ export default function PlaygroundPage() {
                                     <div>
                                         <div className="text-sm font-mono font-bold text-neon">Protected by CENCERA</div>
                                         <div className="text-xs text-zinc-400 font-mono mt-1">
-                                            All connections are monitored for security. We never store your private keys.
+                                            All connections are monitored for security.
                                         </div>
                                     </div>
                                 </div>
@@ -903,8 +1110,14 @@ export default function PlaygroundPage() {
             {/* Send Transaction Confirmation Modal */}
             {
                 showSendConfirm && recipientTrustScore && (
-                    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                        <div className="bg-surface border border-subtle rounded-xl max-w-lg w-full p-6 relative">
+                    <div
+                        className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4"
+                        onClick={() => setShowSendConfirm(false)}
+                    >
+                        <div
+                            className="bg-surface border border-subtle rounded-xl max-w-lg w-full p-4 sm:p-6 relative max-h-[85vh] overflow-y-auto"
+                            onClick={(e) => e.stopPropagation()}
+                        >
                             <button
                                 onClick={() => setShowSendConfirm(false)}
                                 className="absolute top-4 right-4 text-zinc-400 hover:text-white transition-colors"
@@ -1094,8 +1307,14 @@ export default function PlaygroundPage() {
             {/* Slippage Settings Modal */}
             {
                 showSlippageSettings && (
-                    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                        <div className="bg-surface border border-subtle rounded-xl max-w-md w-full p-6 relative">
+                    <div
+                        className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4"
+                        onClick={() => setShowSlippageSettings(false)}
+                    >
+                        <div
+                            className="bg-surface border border-subtle rounded-xl max-w-md w-full p-4 sm:p-6 relative max-h-[85vh] overflow-y-auto"
+                            onClick={(e) => e.stopPropagation()}
+                        >
                             <button
                                 onClick={() => setShowSlippageSettings(false)}
                                 className="absolute top-4 right-4 text-zinc-400 hover:text-white transition-colors"
@@ -1165,8 +1384,14 @@ export default function PlaygroundPage() {
 
             {/* CENCERA Interceptor: Risky Site Connection */}
             {showRiskySiteInterceptor && (
-                <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-surface border-2 border-red-500 rounded-xl max-w-lg w-full p-6 relative">
+                <div
+                    className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4"
+                    onClick={() => setShowRiskySiteInterceptor(false)}
+                >
+                    <div
+                        className="bg-surface border-2 border-red-500 rounded-xl max-w-lg w-full p-4 sm:p-6 relative max-h-[85vh] overflow-y-auto"
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         <button
                             onClick={() => setShowRiskySiteInterceptor(false)}
                             className="absolute top-4 right-4 text-zinc-400 hover:text-white transition-colors"
@@ -1174,47 +1399,40 @@ export default function PlaygroundPage() {
                             <X className="w-5 h-5" />
                         </button>
 
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-12 rounded-full bg-red-500/20 border-2 border-red-500 flex items-center justify-center">
-                                <AlertCircle className="w-6 h-6 text-red-400 animate-pulse" />
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-red-500/20 border-2 border-red-500 flex items-center justify-center">
+                                <AlertCircle className="w-5 h-5 sm:w-6 sm:h-6 text-red-400 animate-pulse" />
                             </div>
-                            <div>
-                                <h2 className="text-xl font-bold text-red-400 font-sans">⚠️ CENCERA Security Alert</h2>
-                                <p className="text-sm text-zinc-400 font-mono">Connection Request Intercepted</p>
+                            <div className="flex-1">
+                                <h2 className="text-lg sm:text-xl font-bold text-red-400 font-sans flex items-center gap-2">
+                                    <AlertTriangle className="w-5 h-5" />
+                                    Phishing Site Detected
+                                </h2>
+                                <p className="text-xs text-zinc-500 font-mono">fake-uniswap-swap.xyz</p>
+                            </div>
+                            <div className="px-3 py-1 bg-red-500/20 border-2 border-red-500 rounded-lg">
+                                <span className="text-2xl font-mono font-bold text-red-400">28/100</span>
                             </div>
                         </div>
 
-                        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg mb-6">
-                            <div className="flex items-center justify-between mb-3">
-                                <div>
-                                    <div className="text-sm font-mono text-zinc-300 mb-1">Requesting Site</div>
-                                    <div className="text-base font-mono font-bold text-white">fake-uniswap-swap.xyz</div>
-                                </div>
-                                <div className="px-3 py-1 bg-red-500/20 border-2 border-red-500 rounded-lg">
-                                    <span className="text-2xl font-mono font-bold text-red-400">28/100</span>
-                                </div>
-                            </div>
-                            <div className="text-xs text-red-300 font-mono">⚠️ HIGH RISK - Potential phishing attempt detected</div>
+                        <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg mb-4">
+                            <div className="text-xs font-mono font-bold text-red-300">HIGH RISK - Potential phishing</div>
                         </div>
 
-                        <div className="mb-6">
-                            <div className="text-sm font-mono font-bold text-white mb-3">🚨 Risk Factors Detected:</div>
-                            <div className="space-y-2">
-                                <div className="flex items-start gap-2 text-sm">
-                                    <X className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+                        <div className="mb-4">
+                            <div className="text-sm font-mono font-bold text-white mb-2">Key Issues:</div>
+                            <div className="space-y-1.5">
+                                <div className="flex items-center gap-2 text-xs">
+                                    <X className="w-3 h-3 text-red-400 flex-shrink-0" />
                                     <span className="text-red-300 font-mono">Domain registered 3 days ago</span>
                                 </div>
-                                <div className="flex items-start gap-2 text-sm">
-                                    <X className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+                                <div className="flex items-center gap-2 text-xs">
+                                    <X className="w-3 h-3 text-red-400 flex-shrink-0" />
                                     <span className="text-red-300 font-mono">Mimics legitimate DeFi protocol</span>
                                 </div>
-                                <div className="flex items-start gap-2 text-sm">
-                                    <X className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-                                    <span className="text-red-300 font-mono">Unusual permission requests</span>
-                                </div>
-                                <div className="flex items-start gap-2 text-sm">
-                                    <X className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-                                    <span className="text-red-300 font-mono">No verified smart contracts</span>
+                                <div className="flex items-center gap-2 text-xs">
+                                    <X className="w-3 h-3 text-red-400 flex-shrink-0" />
+                                    <span className="text-red-300 font-mono">No verified contracts</span>
                                 </div>
                             </div>
                         </div>
@@ -1239,8 +1457,14 @@ export default function PlaygroundPage() {
 
             {/* CENCERA Interceptor: Suspicious Transaction */}
             {showSuspiciousTxInterceptor && (
-                <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-surface border-2 border-yellow-500 rounded-xl max-w-lg w-full p-6 relative">
+                <div
+                    className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4"
+                    onClick={() => setShowSuspiciousTxInterceptor(false)}
+                >
+                    <div
+                        className="bg-surface border-2 border-yellow-500 rounded-xl max-w-lg w-full p-4 sm:p-6 relative max-h-[85vh] overflow-y-auto"
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         <button
                             onClick={() => setShowSuspiciousTxInterceptor(false)}
                             className="absolute top-4 right-4 text-zinc-400 hover:text-white transition-colors"
@@ -1248,64 +1472,36 @@ export default function PlaygroundPage() {
                             <X className="w-5 h-5" />
                         </button>
 
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-12 rounded-full bg-yellow-500/20 border-2 border-yellow-500 flex items-center justify-center">
-                                <AlertCircle className="w-6 h-6 text-yellow-400" />
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-yellow-500/20 border-2 border-yellow-500 flex items-center justify-center">
+                                <AlertCircle className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400" />
                             </div>
-                            <div>
-                                <h2 className="text-xl font-bold text-yellow-400 font-sans">⚡ Unusual Transaction Detected</h2>
-                                <p className="text-sm text-zinc-400 font-mono">CENCERA AI Analysis</p>
+                            <div className="flex-1">
+                                <h2 className="text-lg sm:text-xl font-bold text-yellow-400 font-sans flex items-center gap-2">
+                                    <Zap className="w-5 h-5" />
+                                    Suspicious Transaction
+                                </h2>
+                                <p className="text-xs text-zinc-500 font-mono">0x1a2b...9f3c • 5.0 ETH (~$11,500)</p>
                             </div>
-                        </div>
-
-                        <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg mb-6">
-                            <div className="flex items-center justify-between mb-3">
-                                <div>
-                                    <div className="text-sm font-mono text-zinc-300 mb-1">Transaction To</div>
-                                    <div className="text-sm font-mono font-bold text-white">0x1a2b...9f3c</div>
-                                </div>
-                                <div className="px-3 py-1 bg-yellow-500/20 border-2 border-yellow-500 rounded-lg">
-                                    <span className="text-2xl font-mono font-bold text-yellow-400">45/100</span>
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-                                <div>
-                                    <span className="text-zinc-500">Amount:</span>
-                                    <span className="text-white ml-2">5.0 ETH</span>
-                                </div>
-                                <div>
-                                    <span className="text-zinc-500">Value:</span>
-                                    <span className="text-white ml-2">~$11,500</span>
-                                </div>
+                            <div className="px-3 py-1 bg-yellow-500/20 border-2 border-yellow-500 rounded-lg">
+                                <span className="text-2xl font-mono font-bold text-yellow-400">45/100</span>
                             </div>
                         </div>
 
-                        <div className="mb-6">
-                            <div className="text-sm font-mono font-bold text-white mb-3">⚡ Suspicious Indicators:</div>
-                            <div className="space-y-2">
-                                <div className="flex items-start gap-2 text-sm">
-                                    <AlertCircle className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
-                                    <span className="text-zinc-300 font-mono">Recipient has limited transaction history</span>
+                        <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg mb-4">
+                            <div className="text-xs font-mono font-bold text-yellow-300">WARNING - High-value first-time transfer</div>
+                        </div>
+
+                        <div className="mb-4">
+                            <div className="text-sm font-mono font-bold text-white mb-2">Red Flags:</div>
+                            <div className="space-y-1.5">
+                                <div className="flex items-center gap-2 text-xs">
+                                    <AlertCircle className="w-3 h-3 text-yellow-400 flex-shrink-0" />
+                                    <span className="text-zinc-300 font-mono">Limited transaction history</span>
                                 </div>
-                                <div className="flex items-start gap-2 text-sm">
-                                    <AlertCircle className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
-                                    <span className="text-zinc-300 font-mono">High-value first-time transfer</span>
-                                </div>
-                                <div className="flex items-start gap-2 text-sm">
-                                    <AlertCircle className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
+                                <div className="flex items-center gap-2 text-xs">
+                                    <AlertCircle className="w-3 h-3 text-yellow-400 flex-shrink-0" />
                                     <span className="text-zinc-300 font-mono">Address flagged in 2 reports</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="p-4 bg-neon/10 border border-neon/30 rounded-lg mb-6">
-                            <div className="flex items-start gap-2">
-                                <Shield className="w-5 h-5 text-neon flex-shrink-0 mt-0.5" />
-                                <div>
-                                    <div className="text-sm font-mono font-bold text-neon mb-1">CENCERA Recommendation</div>
-                                    <div className="text-xs text-zinc-400 font-mono">
-                                        Consider sending a test transaction first, or verify recipient independently
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1330,8 +1526,14 @@ export default function PlaygroundPage() {
 
             {/* CENCERA Interceptor: Malicious Smart Contract */}
             {showMaliciousContractInterceptor && (
-                <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-surface border-2 border-red-500 rounded-xl max-w-lg w-full p-6 relative">
+                <div
+                    className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4"
+                    onClick={() => setShowMaliciousContractInterceptor(false)}
+                >
+                    <div
+                        className="bg-surface border-2 border-red-500 rounded-xl max-w-lg w-full p-4 sm:p-6 relative max-h-[85vh] overflow-y-auto"
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         <button
                             onClick={() => setShowMaliciousContractInterceptor(false)}
                             className="absolute top-4 right-4 text-zinc-400 hover:text-white transition-colors"
@@ -1339,59 +1541,40 @@ export default function PlaygroundPage() {
                             <X className="w-5 h-5" />
                         </button>
 
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-12 rounded-full bg-red-500/20 border-2 border-red-500 flex items-center justify-center animate-pulse">
-                                <AlertCircle className="w-6 h-6 text-red-400" />
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-red-500/20 border-2 border-red-500 flex items-center justify-center animate-pulse">
+                                <AlertCircle className="w-5 h-5 sm:w-6 sm:h-6 text-red-400" />
                             </div>
-                            <div>
-                                <h2 className="text-xl font-bold text-red-400 font-sans">🚨 CRITICAL THREAT DETECTED</h2>
-                                <p className="text-sm text-zinc-400 font-mono">Smart Contract Analysis</p>
+                            <div className="flex-1">
+                                <h2 className="text-lg sm:text-xl font-bold text-red-400 font-sans flex items-center gap-2">
+                                    <ShieldAlert className="w-5 h-5" />
+                                    CRITICAL THREAT
+                                </h2>
+                                <p className="text-xs text-zinc-500 font-mono">0xdead...beef</p>
                             </div>
-                        </div>
-
-                        <div className="p-4 bg-red-500/10 border-2 border-red-500/50 rounded-lg mb-6">
-                            <div className="flex items-center justify-between mb-3">
-                                <div>
-                                    <div className="text-sm font-mono text-zinc-300 mb-1">Contract Address</div>
-                                    <div className="text-sm font-mono font-bold text-white">0xdead...beef</div>
-                                </div>
-                                <div className="px-3 py-1 bg-red-500/20 border-2 border-red-500 rounded-lg animate-pulse">
-                                    <span className="text-2xl font-mono font-bold text-red-400">12/100</span>
-                                </div>
-                            </div>
-                            <div className="text-xs text-red-300 font-mono font-bold">🚨 EXTREMELY HIGH RISK - DO NOT INTERACT</div>
-                        </div>
-
-                        <div className="mb-6">
-                            <div className="text-sm font-mono font-bold text-red-400 mb-3">🚨 Critical Security Issues:</div>
-                            <div className="space-y-2">
-                                <div className="flex items-start gap-2 text-sm p-2 bg-red-500/20 rounded">
-                                    <X className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-                                    <span className="text-red-200 font-mono font-bold">Unverified contract source code</span>
-                                </div>
-                                <div className="flex items-start gap-2 text-sm p-2 bg-red-500/20 rounded">
-                                    <X className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-                                    <span className="text-red-200 font-mono font-bold">Malicious drainer function detected</span>
-                                </div>
-                                <div className="flex items-start gap-2 text-sm p-2 bg-red-500/20 rounded">
-                                    <X className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-                                    <span className="text-red-200 font-mono font-bold">Linked to known scam operations</span>
-                                </div>
-                                <div className="flex items-start gap-2 text-sm p-2 bg-red-500/20 rounded">
-                                    <X className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-                                    <span className="text-red-200 font-mono font-bold">157 victim reports in 24 hours</span>
-                                </div>
+                            <div className="px-3 py-1 bg-red-500/20 border-2 border-red-500 rounded-lg animate-pulse">
+                                <span className="text-2xl font-mono font-bold text-red-400">12/100</span>
                             </div>
                         </div>
 
-                        <div className="p-4 bg-black border-2 border-red-500 rounded-lg mb-6">
-                            <div className="flex items-start gap-2">
-                                <Shield className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-                                <div>
-                                    <div className="text-sm font-mono font-bold text-red-400 mb-1">⚠️ CENCERA STRONGLY RECOMMENDS</div>
-                                    <div className="text-xs text-red-200 font-mono">
-                                        DO NOT interact with this contract. This will likely result in loss of all approved funds.
-                                    </div>
+                        <div className="p-3 bg-red-500/10 border-2 border-red-500/50 rounded-lg mb-4">
+                            <div className="text-xs font-mono font-bold text-red-300">EXTREME RISK - Malicious drainer detected</div>
+                        </div>
+
+                        <div className="mb-4">
+                            <div className="text-sm font-mono font-bold text-red-400 mb-2">Critical Issues:</div>
+                            <div className="space-y-1.5">
+                                <div className="flex items-center gap-2 text-xs p-1.5 bg-red-500/10 rounded">
+                                    <X className="w-3 h-3 text-red-400 flex-shrink-0" />
+                                    <span className="text-red-200 font-mono font-bold">Unverified contract</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-xs p-1.5 bg-red-500/10 rounded">
+                                    <X className="w-3 h-3 text-red-400 flex-shrink-0" />
+                                    <span className="text-red-200 font-mono font-bold">Drainer function</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-xs p-1.5 bg-red-500/10 rounded">
+                                    <X className="w-3 h-3 text-red-400 flex-shrink-0" />
+                                    <span className="text-red-200 font-mono font-bold">157 victims in 24h</span>
                                 </div>
                             </div>
                         </div>
@@ -1402,6 +1585,230 @@ export default function PlaygroundPage() {
                         >
                             🛡️ BLOCK & CLOSE
                         </button>
+                    </div>
+                </div>
+            )}
+
+            {/* CENCERA Interceptor: Combination Threat */}
+            {showCombinationThreatInterceptor && (
+                <div
+                    className="fixed inset-0 bg-black/95 backdrop-blur-md flex items-center justify-center z-50 p-2 sm:p-4"
+                    onClick={() => setShowCombinationThreatInterceptor(false)}
+                >
+                    <div
+                        className="bg-surface border-2 border-red-500 rounded-xl max-w-2xl w-full p-4 sm:p-6 relative shadow-2xl shadow-red-500/20 max-h-[85vh] overflow-y-auto"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button
+                            onClick={() => setShowCombinationThreatInterceptor(false)}
+                            className="absolute top-4 right-4 text-zinc-400 hover:text-white transition-colors"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="relative">
+                                <div className="w-14 h-14 rounded-full bg-red-500/20 border-2 border-red-500 flex items-center justify-center animate-pulse">
+                                    <AlertCircle className="w-8 h-8 text-red-400" />
+                                </div>
+                                <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-orange-500 border-2 border-surface flex items-center justify-center">
+                                    <span className="text-sm font-bold text-white">3</span>
+                                </div>
+                            </div>
+                            <div className="flex-1">
+                                <h2 className="text-2xl font-bold text-red-400 font-sans flex items-center gap-2">
+                                    <ShieldAlert className="w-6 h-6" />
+                                    CRITICAL: Multiple Threats
+                                </h2>
+                                <p className="text-sm text-zinc-400 font-mono">CENCERA Multi-Vector Attack Analysis</p>
+                            </div>
+                            <div className="px-4 py-2 bg-red-500/20 border-2 border-red-500 rounded-lg animate-pulse">
+                                <span className="text-3xl font-mono font-bold text-red-400">8/100</span>
+                            </div>
+                        </div>
+
+                        <div className="p-3 bg-red-500/10 border-2 border-red-500/50 rounded-lg mb-4">
+                            <div className="text-xs font-mono font-bold text-red-300 mb-2 flex items-center gap-2">
+                                <AlertTriangle className="w-4 h-4" />
+                                EXTREMELY HIGH RISK - Multi-vector attack detected
+                            </div>
+                        </div>
+
+                        {/* All Threats - Flat List */}
+                        <div className="mb-4">
+                            <div className="text-sm font-mono font-bold text-white mb-2">Threats Detected:</div>
+                            <div className="space-y-2">
+                                {/* Threat 1 */}
+                                <div className="flex items-center justify-between py-1.5">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-6 h-6 rounded-full bg-red-500/20 border border-red-500 flex items-center justify-center flex-shrink-0">
+                                            <span className="text-xs font-bold text-red-400">1</span>
+                                        </div>
+                                        <div>
+                                            <div className="text-xs font-mono font-bold text-red-300">Phishing Site</div>
+                                            <div className="text-xs text-zinc-500 font-mono">fake-uniswap-swap.xyz • Domain: 3 days</div>
+                                        </div>
+                                    </div>
+                                    <div className="px-2 py-0.5 bg-red-500/20 border border-red-500 rounded text-xs font-mono text-red-400">
+                                        28
+                                    </div>
+                                </div>
+
+                                {/* Threat 2 */}
+                                <div className="flex items-center justify-between py-1.5">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-6 h-6 rounded-full bg-orange-500/20 border border-orange-500 flex items-center justify-center flex-shrink-0">
+                                            <span className="text-xs font-bold text-orange-400">2</span>
+                                        </div>
+                                        <div>
+                                            <div className="text-xs font-mono font-bold text-orange-300">Malicious Contract</div>
+                                            <div className="text-xs text-zinc-500 font-mono">0xdead...beef • Drainer function</div>
+                                        </div>
+                                    </div>
+                                    <div className="px-2 py-0.5 bg-orange-500/20 border border-orange-500 rounded text-xs font-mono text-orange-400">
+                                        12
+                                    </div>
+                                </div>
+
+                                {/* Threat 3 */}
+                                <div className="flex items-center justify-between py-1.5">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-6 h-6 rounded-full bg-yellow-500/20 border border-yellow-500 flex items-center justify-center flex-shrink-0">
+                                            <span className="text-xs font-bold text-yellow-400">3</span>
+                                        </div>
+                                        <div>
+                                            <div className="text-xs font-mono font-bold text-yellow-300">Suspicious Recipient</div>
+                                            <div className="text-xs text-zinc-500 font-mono">0x1a2b...9f3c • Known scammer</div>
+                                        </div>
+                                    </div>
+                                    <div className="px-2 py-0.5 bg-yellow-500/20 border border-yellow-500 rounded text-xs font-mono text-yellow-400">
+                                        45
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Attack Vector - Simple List */}
+                        <div className="mb-4">
+                            <div className="text-sm font-mono font-bold text-red-400 mb-2 flex items-center gap-2">
+                                <Zap className="w-4 h-4" />
+                                Attack Flow:
+                            </div>
+                            <div className="space-y-1">
+                                <div className="flex gap-2 items-start text-xs">
+                                    <span className="text-red-400 font-mono">1.</span>
+                                    <span className="text-zinc-400 font-mono">Phishing site gains trust</span>
+                                </div>
+                                <div className="flex gap-2 items-start text-xs">
+                                    <span className="text-orange-400 font-mono">2.</span>
+                                    <span className="text-zinc-400 font-mono">Contract requests unlimited approval</span>
+                                </div>
+                                <div className="flex gap-2 items-start text-xs">
+                                    <span className="text-yellow-400 font-mono">3.</span>
+                                    <span className="text-zinc-400 font-mono">Scammer receives drained funds</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Critical Warning - Inline */}
+                        <div className="mb-4 border-l-4 border-red-500 pl-3">
+                            <div className="text-xs font-mono font-bold text-red-400 mb-1 flex items-center gap-2">
+                                <AlertTriangle className="w-4 h-4" />
+                                CRITICAL WARNING
+                            </div>
+                            <div className="text-xs text-red-200 font-mono leading-relaxed">
+                                DO NOT proceed. This coordinated attack will drain your entire wallet.
+                            </div>
+                        </div>
+
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setShowCombinationThreatInterceptor(false)}
+                                className="flex-1 px-6 py-4 bg-gradient-to-r from-red-500 to-red-600 text-white font-mono font-bold rounded-lg hover:from-red-600 hover:to-red-700 transition-colors shadow-lg flex items-center justify-center gap-2"
+                            >
+                                <Shield className="w-5 h-5" />
+                                BLOCK ALL THREATS
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setShowCombinationThreatInterceptor(false);
+                                    setShowReportSuccess(true);
+                                }}
+                                className="px-6 py-4 bg-black/60 border-2 border-red-500/50 text-red-300 font-mono font-bold rounded-lg hover:bg-black/80 transition-colors flex items-center justify-center gap-2"
+                            >
+                                <AlertTriangle className="w-5 h-5" />
+                                Report Attack
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Report Attack Success Modal */}
+            {showReportSuccess && (
+                <div
+                    className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4"
+                    onClick={() => setShowReportSuccess(false)}
+                >
+                    <div
+                        className="bg-surface border-2 border-neon rounded-xl max-w-md w-full p-4 sm:p-6 relative"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button
+                            onClick={() => setShowReportSuccess(false)}
+                            className="absolute top-4 right-4 text-zinc-400 hover:text-white transition-colors"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+
+                        <div className="flex flex-col items-center text-center">
+                            <div className="w-16 h-16 rounded-full bg-neon/20 border-2 border-neon flex items-center justify-center mb-4">
+                                <CheckCircle className="w-8 h-8 text-neon" />
+                            </div>
+
+                            <h2 className="text-xl font-bold text-white mb-2 font-sans">Attack Reported</h2>
+                            <p className="text-sm text-zinc-400 font-mono mb-6">
+                                Thank you for helping keep the crypto community safe
+                            </p>
+
+                            <div className="w-full bg-black/40 rounded-lg p-4 mb-6 text-left">
+                                <div className="text-xs font-mono font-bold text-neon mb-3">Report Details:</div>
+                                <div className="space-y-2 text-xs font-mono text-zinc-400">
+                                    <div className="flex justify-between">
+                                        <span>Threat Type:</span>
+                                        <span className="text-white">Multi-Vector Attack</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span>Trust Score:</span>
+                                        <span className="text-red-400">8/100</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span>Report ID:</span>
+                                        <span className="text-white">#CEN-{Math.floor(Math.random() * 10000)}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span>Status:</span>
+                                        <span className="text-neon">Submitted</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="w-full p-3 bg-neon/10 border border-neon/30 rounded-lg mb-6">
+                                <div className="flex items-start gap-2">
+                                    <Shield className="w-4 h-4 text-neon flex-shrink-0 mt-0.5" />
+                                    <div className="text-xs text-zinc-300 font-mono text-left">
+                                        Your report helps CENCERA's AI improve threat detection for everyone
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={() => setShowReportSuccess(false)}
+                                className="w-full px-6 py-3 bg-neon text-black font-mono font-bold rounded-lg hover:bg-white transition-colors"
+                            >
+                                Close
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

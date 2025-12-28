@@ -53,24 +53,23 @@ export function SearchInput({
                             className="bg-transparent text-sm font-medium text-zinc-300 focus:outline-none py-4 px-2 cursor-pointer hover:text-white"
                         >
                             <option value="1" className="bg-surface text-zinc-300">Ethereum</option>
-                            <option value="56" className="bg-surface text-zinc-300">BNB Chain</option>
-                            <option value="137" className="bg-surface text-zinc-300">Polygon</option>
-                            <option value="43114" className="bg-surface text-zinc-300">Avalanche</option>
-                            <option value="42161" className="bg-surface text-zinc-300">Arbitrum One</option>
                             <option value="10" className="bg-surface text-zinc-300">Optimism</option>
-                            <option value="8453" className="bg-surface text-zinc-300">Base</option>
-                            <option value="324" className="bg-surface text-zinc-300">zkSync Era</option>
-                            <option value="59144" className="bg-surface text-zinc-300">Linea</option>
-                            <option value="534352" className="bg-surface text-zinc-300">Scroll</option>
-                            <option value="81457" className="bg-surface text-zinc-300">Blast</option>
+                            <option value="56" className="bg-surface text-zinc-300">BNB Smart Chain</option>
+                            <option value="137" className="bg-surface text-zinc-300">Polygon</option>
                             <option value="250" className="bg-surface text-zinc-300">Fantom</option>
-                            <option value="25" className="bg-surface text-zinc-300">Cronos</option>
-                            <option value="100" className="bg-surface text-zinc-300">Gnosis</option>
-                            <option value="1284" className="bg-surface text-zinc-300">Moonbeam</option>
-                            <option value="1313161554" className="bg-surface text-zinc-300">Aurora</option>
-                            <option value="42220" className="bg-surface text-zinc-300">Celo</option>
-                            <option value="1088" className="bg-surface text-zinc-300">Metis</option>
-                            <option value="5000" className="bg-surface text-zinc-300">Mantle</option>
+                            <option value="324" className="bg-surface text-zinc-300">zkSync Era</option>
+                            <option value="8453" className="bg-surface text-zinc-300">Base</option>
+                            <option value="42161" className="bg-surface text-zinc-300">Arbitrum One</option>
+                            <option value="43114" className="bg-surface text-zinc-300">Avalanche</option>
+
+                            {/* Non-EVM Chains (Coming Soon) */}
+                            <option disabled className="bg-surface text-zinc-500 font-bold max-[400px]:hidden">──────────────</option>
+                            <option value="aptos" disabled className="bg-surface text-zinc-500">Aptos (Coming Soon)</option>
+                            <option value="cosmos" disabled className="bg-surface text-zinc-500">Cosmos Hub (Coming Soon)</option>
+                            <option value="polkadot" disabled className="bg-surface text-zinc-500">Polkadot (Coming Soon)</option>
+                            <option value="solana" disabled className="bg-surface text-zinc-500">Solana (Coming Soon)</option>
+                            <option value="sui" disabled className="bg-surface text-zinc-500">Sui (Coming Soon)</option>
+                            <option value="ton" disabled className="bg-surface text-zinc-500">The Open Network (Coming Soon)</option>
                         </select>
                     </div>
                 )}
