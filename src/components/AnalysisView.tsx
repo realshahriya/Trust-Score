@@ -8,7 +8,7 @@ import { TrustGauge } from '@/components/TrustGauge';
 import { RiskCard } from '@/components/RiskCard';
 import { SocialSentiment } from '@/components/SocialSentiment';
 import { SimulationEngine } from '@/components/SimulationEngine';
-import { Loader2, ShieldAlert, BadgeCheck, Copy, Database, ArrowUpRight } from 'lucide-react';
+import { Loader2, ShieldAlert, BadgeCheck, Copy, Database, ArrowUpRight, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const CHAIN_CONFIG: Record<string, { name: string, explorer: string }> = {
@@ -30,7 +30,11 @@ const CHAIN_CONFIG: Record<string, { name: string, explorer: string }> = {
     "1313161554": { name: "Aurora", explorer: "https://explorer.aurora.dev" },
     "42220": { name: "Celo", explorer: "https://celoscan.io" },
     "1088": { name: "Metis", explorer: "https://andromeda-explorer.metis.io" },
-    "5000": { name: "Mantle", explorer: "https://explorer.mantle.xyz" }
+    "5000": { name: "Mantle", explorer: "https://explorer.mantle.xyz" },
+    "solana": { name: "Solana", explorer: "https://solscan.io" },
+    "sui": { name: "Sui", explorer: "https://suiscan.xyz" },
+    "aptos": { name: "Aptos", explorer: "https://explorer.aptoslabs.com" },
+    "ton": { name: "TON", explorer: "https://tonscan.org" }
 };
 
 export default function AnalysisView() {
@@ -174,19 +178,18 @@ export default function AnalysisView() {
                 {/* Left Col: Score & Summary */}
                 <div className="space-y-6">
                     {/* Gauge */}
-                    <div className="bg-cyber-card rounded-2xl p-8 border border-cyber-border flex flex-col items-center justify-center relative overflow-hidden">
-                        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-trust-100/50 to-transparent opacity-20" />
+                    <div className="bg-zinc-900/50 rounded-2xl p-8 border border-white/5 flex flex-col items-center justify-center relative overflow-hidden">
                         <TrustGauge score={data.score} size={240} />
                         <div className="mt-6 text-center">
-                            <div className="text-2xl font-bold text-white mb-1">{data.label}</div>
+                            <div className="text-2xl font-bold text-white mb-1 font-sans">{data.label}</div>
                             <div className="text-sm text-zinc-500">Confidence: 99.8%</div>
                         </div>
 
                         {/* Hype Indicator */}
                         {data.hypeScore !== undefined && (
-                            <div className="absolute top-4 right-4 flex flex-col items-end">
-                                <div className="text-xs text-zinc-500 uppercase font-bold tracking-wider">Hype</div>
-                                <div className={`text-xl font-bold ${data.hypeScore > 50 ? 'text-trust-100' : 'text-zinc-400'}`}>
+                            <div className="absolute top-6 right-6 flex flex-col items-end">
+                                <div className="text-xs text-zinc-500 uppercase font-bold tracking-wider mb-1">Hype Score</div>
+                                <div className={`text-xl font-bold ${data.hypeScore > 50 ? 'text-white' : 'text-zinc-500'}`}>
                                     {data.hypeScore}/100
                                 </div>
                                 <div className="text-[10px] text-zinc-600">
@@ -197,21 +200,19 @@ export default function AnalysisView() {
                     </div>
 
                     {/* AI Summary */}
-                    <div className="bg-cyber-card/50 rounded-xl p-6 border border-cyber-border">
-                        <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide">AI Summary</h3>
+                    <div className="bg-zinc-900/30 rounded-xl p-6 border border-white/5">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-wide flex items-center gap-2">
+                                <Zap className="w-4 h-4 text-zinc-500" />
+                                AI Summary
+                            </h3>
                             {data.marketData && (
-                                <div className="text-xs text-trust-100 font-mono bg-trust-100/10 px-2 py-1 rounded border border-trust-100/20">
+                                <div className="text-xs text-zinc-400 font-mono bg-white/5 px-2 py-1 rounded border border-white/5">
                                     Est. Value: ${data.marketData.portfolioValueUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                                    {data.marketData.tokenPrice && (
-                                        <span className="ml-2 border-l border-trust-100/20 pl-2 text-zinc-400">
-                                            Price: ${data.marketData.tokenPrice.toLocaleString(undefined, { maximumFractionDigits: 6 })}
-                                        </span>
-                                    )}
                                 </div>
                             )}
                         </div>
-                        <div className="text-zinc-100 leading-relaxed font-mono text-sm border-l-2 border-trust-100 pl-4 py-1">
+                        <div className="text-zinc-300 leading-relaxed text-sm">
                             <FormattedText text={data.summary} />
                         </div>
                     </div>
@@ -228,61 +229,65 @@ export default function AnalysisView() {
                     {/* Transaction Simulator */}
                     <SimulationEngine displayId={data.id} actualAddress={data.address} isContract={data.type === 'contract' || data.type === 'token'} />
 
-                    {/* Social Sentiment Chart */}
-                    <SocialSentiment data={data.sentiment} />
-
-                    {/* Explorer Data */}
-                    <div className="bg-black/40 rounded-xl p-6 border border-cyber-border space-y-4">
-                        <div className="flex items-center justify-between border-b border-cyber-border pb-4">
-                            <h3 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2">
-                                <Database className="w-4 h-4 text-trust-100" />
-                                On-Chain Signals
-                            </h3>
-                            <span className="text-xs text-zinc-500 font-mono">{chainInfo.name}</span>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Social Sentiment Chart */}
+                        <div className="h-full">
+                            <SocialSentiment data={data.sentiment} />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-y-4 text-sm">
-                            <div className="text-zinc-500">Address Type</div>
-                            <div className="text-zinc-200 capitalize text-right font-medium">{data.type}</div>
-
-                            <div className="text-zinc-500">Balance</div>
-                            <div className="text-zinc-200 text-right font-mono">
-                                {data.marketData?.portfolioValueUsd
-                                    ? `$${data.marketData.portfolioValueUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })}`
-                                    : '0.00 ETH'
-                                }
+                        {/* Explorer Data */}
+                        <div className="bg-zinc-900/50 rounded-xl p-6 border border-white/5 space-y-4 h-full">
+                            <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                                <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-wide flex items-center gap-2">
+                                    <Database className="w-4 h-4 text-zinc-500" />
+                                    On-Chain Signals
+                                </h3>
+                                <span className="text-xs text-zinc-500 font-mono">{chainInfo.name}</span>
                             </div>
 
-                            {data.type === 'token' && (
-                                <>
-                                    <div className="text-zinc-500">Token Standard</div>
-                                    <div className="text-trust-100 text-right font-mono">ERC-20</div>
+                            <div className="grid grid-cols-2 gap-y-4 text-sm">
+                                <div className="text-zinc-500">Address Type</div>
+                                <div className="text-white capitalize text-right font-medium">{data.type}</div>
 
-                                    <div className="text-zinc-500">Symbol</div>
-                                    <div className="text-zinc-200 text-right font-bold">{data.id.split('(')[1]?.replace(')', '') || 'Unknown'}</div>
-                                </>
-                            )}
+                                <div className="text-zinc-500">Balance</div>
+                                <div className="text-white text-right font-mono">
+                                    {data.marketData?.portfolioValueUsd
+                                        ? `$${data.marketData.portfolioValueUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })}`
+                                        : '0.00 ETH'
+                                    }
+                                </div>
 
-                            {data.type === 'contract' && (
-                                <>
-                                    <div className="text-zinc-500">Verification</div>
-                                    <div className="text-zinc-400 text-right italic">Unknown Source</div>
-                                </>
-                            )}
+                                {data.type === 'token' && (
+                                    <>
+                                        <div className="text-zinc-500">Token Standard</div>
+                                        <div className="text-zinc-300 text-right font-mono">ERC-20</div>
 
-                            <div className="text-zinc-500">Last Active</div>
-                            <div className="text-zinc-200 text-right">Just now</div>
-                        </div>
+                                        <div className="text-zinc-500">Symbol</div>
+                                        <div className="text-white text-right font-bold">{data.id.split('(')[1]?.replace(')', '') || 'Unknown'}</div>
+                                    </>
+                                )}
 
-                        <div className="pt-4 mt-2 border-t border-cyber-border/50">
-                            <a
-                                href={`${chainInfo.explorer}/address/${data.id}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="block w-full py-2 bg-white/5 hover:bg-white/10 rounded text-center text-xs text-zinc-400 hover:text-white transition-colors border border-white/5"
-                            >
-                                View full history on Explorer
-                            </a>
+                                {data.type === 'contract' && (
+                                    <>
+                                        <div className="text-zinc-500">Verification</div>
+                                        <div className="text-zinc-400 text-right italic">Unknown Source</div>
+                                    </>
+                                )}
+
+                                <div className="text-zinc-500">Last Active</div>
+                                <div className="text-zinc-200 text-right">Just now</div>
+                            </div>
+
+                            <div className="pt-4 mt-2 border-t border-white/5">
+                                <a
+                                    href={`${chainInfo.explorer}/address/${data.id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block w-full py-2.5 bg-white/5 hover:bg-white/10 rounded-lg text-center text-xs text-zinc-400 hover:text-white transition-colors border border-white/5 font-medium"
+                                >
+                                    View full history on Explorer
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -312,12 +317,12 @@ function ExplorerLink({ chainId, address }: { chainId: string, address: string }
     const chainInfo = CHAIN_CONFIG[chainId] || CHAIN_CONFIG["1"];
 
     // Extract actual address from ID string if possible (mock data has "Name (0x..)")
-    // If no parens, assume it's just the address
-    const match = address.match(/\((0x[a-fA-F0-9]{40})\)/);
-    const cleanAddress = match ? match[1] : (address.startsWith('0x') ? address : null);
+    // Support non-EVM formats (no 0x prefix necessarily)
+    const match = address.match(/\((.*?)\)/);
+    const cleanAddress = match ? match[1] : address;
 
-    // Check if it's a valid address format to link, otherwise don't render or disable
-    if (!cleanAddress) return null;
+    // Basic check: Ensure it's not empty
+    if (!cleanAddress || cleanAddress.length < 5) return null;
 
     return (
         <a

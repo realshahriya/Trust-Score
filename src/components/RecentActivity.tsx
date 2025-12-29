@@ -1,3 +1,5 @@
+"use client";
+
 import { ShieldCheck, ShieldAlert, BadgeHelp, CheckCircle, XCircle, ArrowUpRight } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -41,44 +43,47 @@ export function RecentActivity() {
     if (logs.length === 0) return null;
 
     return (
-        <div className="bg-surface border border-white/10 rounded-xl flex flex-col h-full">
-            <div className="p-4 border-b border-white/10 flex justify-between items-center bg-black/20">
-                <h3 className="text-white font-bold flex items-center gap-2">
-                    <ActivityIcon className="w-5 h-5 text-neon" />
+        <div className="bg-zinc-900/50 border border-white/5 rounded-xl flex flex-col h-full">
+            <div className="p-4 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
+                <h3 className="text-white font-bold text-sm flex items-center gap-2">
+                    <ActivityIcon className="w-4 h-4 text-zinc-400" />
                     Live API Logs
                 </h3>
-                <span className="flex h-2 w-2 relative">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                </span>
+                <div className="flex items-center gap-2">
+                    <span className="flex h-1.5 w-1.5 relative">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
+                    </span>
+                    <span className="text-xs text-zinc-500 font-mono">Real-time</span>
+                </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-0.5">
                 {logs.map((log, i) => (
-                    <div key={i} className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/10 transition-colors group text-sm">
+                    <div key={i} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-white/5 transition-colors group text-sm border border-transparent hover:border-white/5">
                         <div className="flex items-center gap-3">
-                            <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${log.method === 'GET' ? 'bg-blue-500/10 text-blue-400' : 'bg-green-500/10 text-green-400'}`}>
+                            <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold font-mono ${log.method === 'GET' ? 'bg-blue-500/10 text-blue-400' : 'bg-green-500/10 text-green-400'}`}>
                                 {log.method}
                             </span>
-                            <span className="font-mono text-zinc-300 group-hover:text-white transition-colors">
+                            <span className="font-mono text-zinc-400 group-hover:text-zinc-200 transition-colors text-xs">
                                 {log.endpoint}
                             </span>
                         </div>
 
                         <div className="flex items-center gap-4 text-xs">
-                            <span className="text-zinc-500">{log.latency}</span>
-                            <div className="flex items-center gap-1.5 min-w-[60px] justify-end">
-                                <span className={log.status === 200 ? "text-green-500" : "text-red-500"}>
+                            <span className="text-zinc-600 font-mono">{log.latency}</span>
+                            <div className="flex items-center gap-1.5 min-w-[50px] justify-end">
+                                <span className={`font-mono ${log.status === 200 ? "text-zinc-400" : "text-red-400"}`}>
                                     {log.status}
                                 </span>
-                                {log.status === 200 ? <CheckCircle className="w-3 h-3 text-green-500" /> : <XCircle className="w-3 h-3 text-red-500" />}
+                                {log.status === 200 ? <CheckCircle className="w-3 h-3 text-zinc-500" /> : <XCircle className="w-3 h-3 text-red-500" />}
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
-            <div className="p-3 border-t border-white/10 bg-black/20 text-center">
-                <button className="text-xs text-neon hover:text-white flex items-center justify-center gap-1 w-full transition-colors">
+            <div className="p-3 border-t border-white/5 bg-white/[0.02] text-center">
+                <button className="text-xs text-zinc-400 hover:text-white flex items-center justify-center gap-1 w-full transition-colors font-medium">
                     View Full Logs <ArrowUpRight className="w-3 h-3" />
                 </button>
             </div>

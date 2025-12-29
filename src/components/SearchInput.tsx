@@ -50,7 +50,7 @@ export function SearchInput({
                         <select
                             value={chain}
                             onChange={(e) => setChain(e.target.value)}
-                            className="bg-transparent text-sm font-medium text-zinc-300 focus:outline-none py-4 px-2 cursor-pointer hover:text-white"
+                            className="bg-transparent text-sm font-medium text-zinc-300 focus:outline-none py-4 px-2 cursor-pointer hover:text-white max-w-[140px] truncate"
                         >
                             <option value="1" className="bg-surface text-zinc-300">Ethereum</option>
                             <option value="10" className="bg-surface text-zinc-300">Optimism</option>
@@ -62,14 +62,16 @@ export function SearchInput({
                             <option value="42161" className="bg-surface text-zinc-300">Arbitrum One</option>
                             <option value="43114" className="bg-surface text-zinc-300">Avalanche</option>
 
-                            {/* Non-EVM Chains (Coming Soon) */}
+                            {/* Non-EVM Chains */}
                             <option disabled className="bg-surface text-zinc-500 font-bold max-[400px]:hidden">──────────────</option>
-                            <option value="aptos" disabled className="bg-surface text-zinc-500">Aptos (Coming Soon)</option>
+                            <option value="solana" className="bg-surface text-zinc-300">Solana</option>
+                            <option value="sui" className="bg-surface text-zinc-300">Sui</option>
+                            <option value="aptos" className="bg-surface text-zinc-300">Aptos</option>
+                            <option value="ton" className="bg-surface text-zinc-300">The Open Network</option>
+
+                            {/* Future Integrations */}
                             <option value="cosmos" disabled className="bg-surface text-zinc-500">Cosmos Hub (Coming Soon)</option>
                             <option value="polkadot" disabled className="bg-surface text-zinc-500">Polkadot (Coming Soon)</option>
-                            <option value="solana" disabled className="bg-surface text-zinc-500">Solana (Coming Soon)</option>
-                            <option value="sui" disabled className="bg-surface text-zinc-500">Sui (Coming Soon)</option>
-                            <option value="ton" disabled className="bg-surface text-zinc-500">The Open Network (Coming Soon)</option>
                         </select>
                     </div>
                 )}

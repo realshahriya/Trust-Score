@@ -109,7 +109,7 @@ export function ThreatMap() {
                         ctx.moveTo(p.x, p.y);
                         ctx.lineTo(other.x, other.y);
                         ctx.strokeStyle = p.color;
-                        ctx.globalAlpha = p.life * 0.2;
+                        ctx.globalAlpha = p.life * 0.1; // Reduced opacity
                         ctx.stroke();
                     }
                 });
@@ -129,27 +129,26 @@ export function ThreatMap() {
     }, []);
 
     return (
-        <div className="w-full h-full relative bg-black/40 rounded-xl overflow-hidden border border-white/10 group">
-            <canvas ref={canvasRef} className="block" />
+        <div className="w-full h-full relative bg-zinc-900/50 rounded-xl overflow-hidden group">
+            <canvas ref={canvasRef} className="block opacity-60" />
 
             {/* Overlay UI */}
             <div className="absolute top-4 left-4 pointer-events-none">
                 <div className="flex items-center gap-2">
-                    <span className="relative flex h-3 w-3">
+                    <span className="relative flex h-2 w-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
                     </span>
-                    <h3 className="text-sm font-bold text-zinc-300 uppercase tracking-widest">Live Threat Map</h3>
+                    <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Live Threat Map</h3>
                 </div>
-                <div className="text-xs text-zinc-500 font-mono mt-1">Monitoring Global Nodes...</div>
             </div>
 
             <div className="absolute bottom-4 right-4 pointer-events-none text-right">
-                <div className="text-xs font-mono text-neon">
-                    <span className="text-zinc-500">Nodes Active:</span> 8421
+                <div className="text-xs font-mono text-zinc-400">
+                    <span className="text-zinc-600">Nodes Active:</span> 8421
                 </div>
-                <div className="text-xs font-mono text-red-400">
-                    <span className="text-zinc-500">Threats Detected:</span> 12
+                <div className="text-xs font-mono text-zinc-400">
+                    <span className="text-zinc-600">Threats Detected:</span> 12
                 </div>
             </div>
         </div>
