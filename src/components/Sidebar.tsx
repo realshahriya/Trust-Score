@@ -71,7 +71,7 @@ export function Sidebar() {
                             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/10 transition-all group font-mono text-sm text-zinc-400 hover:text-white"
                         >
                             <MessageSquare className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                            <span className="font-medium">Feedback</span>
+                            <span className="font-medium">Report issue</span>
                         </button>
                     </div>
 
