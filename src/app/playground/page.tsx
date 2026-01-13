@@ -140,12 +140,12 @@ export default function PlaygroundPage() {
                 <p className="text-zinc-400 font-mono text-xs sm:text-sm">Interactive demos with CENCERA trust intelligence.</p>
             </div>
 
-            {/* Info Banner */}
-            <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 mb-6">
+            {/* Info Banner - Cyan Primary */}
+            <div className="bg-neon/10 border border-neon/20 rounded-xl p-4 mb-6">
                 <div className="flex items-start gap-3">
-                    <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                    <Info className="w-5 h-5 text-neon flex-shrink-0 mt-0.5" />
                     <div>
-                        <div className="text-sm font-bold text-blue-400 mb-1 font-sans">Interactive Demo Mode</div>
+                        <div className="text-sm font-bold text-neon mb-1 font-sans">Interactive Demo Mode</div>
                         <div className="text-xs text-zinc-400 font-sans leading-relaxed">
                             You can test how CENCERA analyzes DEX & SWAP interactions. Paste any wallet address in the send section to verify trust scores.
                         </div>
@@ -155,12 +155,12 @@ export default function PlaygroundPage() {
 
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-8 border-b border-white/10 overflow-x-auto px-6">
                 <button onClick={() => setActiveTab("wallet")} className={`flex items-center gap-2 py-4 font-sans font-medium transition-all relative text-sm ${activeTab === "wallet" ? "text-white" : "text-zinc-500 hover:text-zinc-300"}`}>
-                    <Wallet className={`w-4 h-4 ${activeTab === "wallet" ? "text-blue-400" : "text-zinc-500"}`} /><span className="hidden sm:inline">Wallet Demo</span><span className="sm:hidden">Wallet</span>
-                    {activeTab === "wallet" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500" />}
+                    <Wallet className={`w-4 h-4 ${activeTab === "wallet" ? "text-neon" : "text-zinc-500"}`} /><span className="hidden sm:inline">Wallet Demo</span><span className="sm:hidden">Wallet</span>
+                    {activeTab === "wallet" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-neon" />}
                 </button>
                 <button onClick={() => setActiveTab("defi")} className={`flex items-center gap-2 py-4 font-sans font-medium transition-all relative text-sm ${activeTab === "defi" ? "text-white" : "text-zinc-500 hover:text-zinc-300"}`}>
-                    <Coins className={`w-4 h-4 ${activeTab === "defi" ? "text-purple-400" : "text-zinc-500"}`} /><span className="hidden sm:inline">DEX Demo</span><span className="sm:hidden">DEX</span>
-                    {activeTab === "defi" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-500" />}
+                    <Coins className={`w-4 h-4 ${activeTab === "defi" ? "text-brand-pink" : "text-zinc-500"}`} /><span className="hidden sm:inline">DEX Demo</span><span className="sm:hidden">DEX</span>
+                    {activeTab === "defi" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-pink" />}
                 </button>
                 <button onClick={() => setActiveTab("interceptor")} className={`flex items-center gap-2 py-4 font-sans font-medium transition-all relative text-sm ${activeTab === "interceptor" ? "text-white" : "text-zinc-500 hover:text-zinc-300"}`}>
                     <Shield className={`w-4 h-4 ${activeTab === "interceptor" ? "text-red-400" : "text-zinc-500"}`} /><span className="hidden sm:inline">Interceptor Demo</span><span className="sm:hidden">Interceptor</span>
@@ -175,8 +175,8 @@ export default function PlaygroundPage() {
                         <div className="bg-zinc-900/50 border border-white/5 rounded-2xl p-8 mb-8">
                             <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-14 h-14 rounded-full bg-blue-500/10 flex items-center justify-center">
-                                        <Wallet className="w-6 h-6 text-blue-400" />
+                                    <div className="w-14 h-14 rounded-full bg-neon/10 flex items-center justify-center">
+                                        <Wallet className="w-6 h-6 text-neon" />
                                     </div>
                                     <div>
                                         <div className="flex items-center gap-2">
@@ -399,9 +399,9 @@ export default function PlaygroundPage() {
                                                 </button>
                                             </div>
 
-                                            <div className="p-4 bg-blue-500/5 border border-blue-500/10 rounded-xl flex items-center gap-3">
-                                                <Shield className="w-5 h-5 text-blue-400" />
-                                                <div className="text-xs text-blue-300">
+                                            <div className="p-4 bg-neon/5 border border-neon/10 rounded-xl flex items-center gap-3">
+                                                <Shield className="w-5 h-5 text-neon" />
+                                                <div className="text-xs text-neon/80">
                                                     Your wallet has a <span className="font-bold">Trust Score of {walletTrustScore}</span>. It is safe to interact with.
                                                 </div>
                                             </div>
@@ -656,7 +656,7 @@ export default function PlaygroundPage() {
                                                 }}
                                                 className="w-10 h-10 bg-zinc-900 border-2 border-white/10 rounded-xl flex items-center justify-center hover:border-white/20 transition-colors shadow-xl"
                                             >
-                                                <ArrowDownUp className="w-5 h-5 text-blue-400" />
+                                                <ArrowDownUp className="w-5 h-5 text-neon" />
                                             </button>
                                         </div>
 
@@ -697,12 +697,12 @@ export default function PlaygroundPage() {
                                         </div>
                                     </div>
 
-                                    {/* Route Info */}
-                                    <div className="mt-6 p-4 bg-blue-500/5 border border-blue-500/10 rounded-xl">
+                                    {/* Route Info - Cyan Primary */}
+                                    <div className="mt-6 p-4 bg-neon/5 border border-neon/10 rounded-xl">
                                         <div className="flex items-center justify-between mb-2">
                                             <div className="flex items-center gap-2">
-                                                <Shield className="w-4 h-4 text-blue-400" />
-                                                <span className="text-sm font-medium text-blue-400">Optimal Route via Uniswap V3</span>
+                                                <Shield className="w-4 h-4 text-neon" />
+                                                <span className="text-sm font-medium text-neon">Optimal Route via Uniswap V3</span>
                                             </div>
                                             <span className={`px-2 py-0.5 ${getTrustBgColor(98)} border rounded text-xs font-medium ${getTrustColor(98)}`}>
                                                 Trust: 98
@@ -756,7 +756,7 @@ export default function PlaygroundPage() {
                                             <div
                                                 key={dex.name}
                                                 className={`p-4 rounded-xl border transition-colors ${idx === 0
-                                                    ? 'bg-blue-500/10 border-blue-500/20'
+                                                    ? 'bg-neon/10 border-neon/20'
                                                     : 'bg-transparent border-white/5 hover:bg-white/5'
                                                     }`}
                                             >
@@ -769,7 +769,7 @@ export default function PlaygroundPage() {
                                                                     {dex.trustScore}
                                                                 </span>
                                                                 {idx === 0 && (
-                                                                    <span className="px-2 py-0.5 bg-blue-500/20 border border-blue-500/30 rounded text-xs font-bold text-blue-400">
+                                                                    <span className="px-2 py-0.5 bg-neon/20 border border-neon/30 rounded text-xs font-bold text-neon">
                                                                         BEST
                                                                     </span>
                                                                 )}

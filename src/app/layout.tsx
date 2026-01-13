@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Syne, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
+import { WalletProvider } from "@/components/WalletProvider";
 
 const syne = Syne({
   variable: "--font-syne",
@@ -34,15 +35,18 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`${syne.variable} ${jetbrainsMono.variable} antialiased bg-void text-zinc-100 flex min-h-screen font-sans selection:bg-neon selection:text-black`}
+        className={`${syne.variable} ${jetbrainsMono.variable} antialiased text-zinc-100 flex min-h-screen font-sans selection:bg-neon selection:text-black`}
       >
-        {/* Global Sidebar */}
-        <div className="flex w-full">
-          <Sidebar />
-          <main className="flex-1 md:ml-64 flex flex-col min-h-screen relative overflow-hidden">
-            {children}
-          </main>
-        </div>
+        <div className="fixed-background" />
+        <WalletProvider>
+          {/* Global Sidebar */}
+          <div className="flex w-full">
+            <Sidebar />
+            <main className="flex-1 md:ml-64 flex flex-col min-h-screen relative overflow-hidden">
+              {children}
+            </main>
+          </div>
+        </WalletProvider>
       </body>
     </html>
   );

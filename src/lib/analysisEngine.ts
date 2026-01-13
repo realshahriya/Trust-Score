@@ -1,4 +1,5 @@
-import { fetchChainData, ChainData } from './blockchain';
+import { ChainData } from './blockchain';
+import { getEngine } from '@/engine/factory';
 import { EntityData, ScoreHistoryPoint, SentimentPoint } from './mockData';
 import { generateSecurityReport } from './aiAgent';
 import { checkHype } from './twitter';
@@ -6,8 +7,9 @@ import { getEthPrice } from './marketData';
 import { FAMOUS_TOKENS } from './knownTokens';
 
 export async function analyzeEntity(input: string, chainId: string = '1'): Promise<EntityData> {
-    // 1. Fetch Real Data
-    const chainData = await fetchChainData(input, chainId);
+    // 1. Fetch Real Data via Chain Engine
+    const engine = getEngine(chainId);
+    const chainData = await engine.fetchData(input);
 
     if (!chainData) {
         throw new Error('Entity not found');
