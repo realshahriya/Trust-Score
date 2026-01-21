@@ -1,12 +1,16 @@
 import { createPublicClient, http, formatEther, isAddress as viemIsAddress } from 'viem';
-import { mainnet, polygon, arbitrum, optimism, base } from 'viem/chains';
+import { mainnet, polygon, arbitrum, optimism, base, bsc, avalanche, fantom, zksync } from 'viem/chains';
 
 // Chain Configuration
 const CHAINS: Record<string, any> = {
     '1': mainnet,
-    '137': polygon,
-    '42161': arbitrum,
     '10': optimism,
+    '56': bsc,
+    '137': polygon,
+    '250': fantom,
+    '324': zksync,
+    '42161': arbitrum,
+    '43114': avalanche,
     '8453': base
 };
 
@@ -52,7 +56,7 @@ const ERC20_ABI = [
 
 export async function fetchChainData(input: string, chainId: string = '1'): Promise<ChainData | null> {
     // 0. Handle Non-EVM Chains (Mock Data)
-    const MOCK_CHAINS = ['solana', 'sui', 'aptos', 'ton'];
+    const MOCK_CHAINS = ['solana', 'sui', 'aptos', 'ton', 'cosmos', 'polkadot'];
     if (MOCK_CHAINS.includes(chainId)) {
         // Return realistic mock data to avoid adding heavy SDKs for prototype
         await new Promise(r => setTimeout(r, 1500)); // Simulate latency

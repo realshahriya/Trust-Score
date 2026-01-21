@@ -2,11 +2,10 @@
 
 import { BarChart3, Clock, Key, TrendingUp, Wallet, Shield, Activity, Download, Eye, RefreshCw, Zap, AlertTriangle } from "lucide-react";
 import { useState } from "react";
-import { useAccount } from 'wagmi';
-import { appKit } from '@/lib/walletConfig';
+import { useMockWallet } from '@/components/WalletProvider';
 
 export default function DashboardPage() {
-    const { isConnected } = useAccount();
+    const { isConnected, connect } = useMockWallet();
     const [selectedPeriod, setSelectedPeriod] = useState("7d");
 
     if (!isConnected) {
@@ -22,7 +21,7 @@ export default function DashboardPage() {
                     </p>
                 </div>
                 <button
-                    onClick={() => appKit.open()}
+                    onClick={connect}
                     className="flex items-center gap-2 px-6 py-3 bg-neon/10 hover:bg-neon/20 border border-neon/20 hover:border-neon/30 rounded-xl text-neon font-mono font-bold transition-all"
                 >
                     <Wallet className="w-5 h-5" />

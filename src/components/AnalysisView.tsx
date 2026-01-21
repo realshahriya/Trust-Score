@@ -24,7 +24,9 @@ const CHAIN_CONFIG: Record<string, { name: string, explorer: string, icon: strin
     "solana": { name: "Solana", explorer: "https://solscan.io", icon: "SOL" },
     "sui": { name: "Sui", explorer: "https://suiscan.xyz", icon: "SUI" },
     "aptos": { name: "Aptos", explorer: "https://explorer.aptoslabs.com", icon: "APT" },
-    "ton": { name: "TON", explorer: "https://tonscan.org", icon: "TON" }
+    "ton": { name: "TON", explorer: "https://tonscan.org", icon: "TON" },
+    "cosmos": { name: "Cosmos Hub", explorer: "https://www.mintscan.io/cosmos", icon: "ATOM" },
+    "polkadot": { name: "Polkadot", explorer: "https://polkadot.subscan.io", icon: "DOT" }
 };
 
 export default function AnalysisView() {

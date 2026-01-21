@@ -1,7 +1,8 @@
 "use client";
 
-import { ShieldCheck, ShieldAlert, BadgeHelp, CheckCircle, XCircle, ArrowUpRight } from "lucide-react";
-import { useState, useEffect } from "react";
+import { CheckCircle, XCircle, ArrowUpRight } from "lucide-react";
+import { useState } from "react";
+import type { SVGProps } from "react";
 
 interface LogItem {
     endpoint: string;
@@ -18,7 +19,7 @@ function generateRandomLogs(): LogItem[] {
         "/v1/trust-score", "/v1/scan/contract", "/v1/scan/wallet", "/v1/monitor/add"
     ];
 
-    return Array.from({ length: 15 }).map((_, i) => {
+    return Array.from({ length: 15 }, () => {
         const isSuccess = Math.random() > 0.05;
         const method: 'GET' | 'POST' = Math.random() > 0.7 ? 'POST' : 'GET';
 
@@ -34,11 +35,7 @@ function generateRandomLogs(): LogItem[] {
 }
 
 export function RecentActivity() {
-    const [logs, setLogs] = useState<LogItem[]>([]);
-
-    useEffect(() => {
-        setLogs(generateRandomLogs());
-    }, []);
+    const [logs] = useState<LogItem[]>(() => generateRandomLogs());
 
     if (logs.length === 0) return null;
 
@@ -92,7 +89,7 @@ export function RecentActivity() {
 }
 
 // Icons helper
-function ActivityIcon(props: any) {
+function ActivityIcon(props: SVGProps<SVGSVGElement>) {
     return (
         <svg
             {...props}

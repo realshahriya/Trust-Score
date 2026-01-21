@@ -9,7 +9,7 @@ export interface AnalysisResult {
 }
 
 export interface ChainEngine {
-    chainId: number;
+    chainId: number | string;
     name: string;
 
     // Core Data Fetching

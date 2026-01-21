@@ -6,6 +6,22 @@ import { checkHype } from './twitter';
 import { getEthPrice } from './marketData';
 import { FAMOUS_TOKENS } from './knownTokens';
 
+type AnalysisWeights = {
+    onChain: number;
+    market: number;
+    social: number;
+    ai: number;
+};
+
+type RandomizationContext = {
+    seed: number;
+    seedHex: string;
+    intensity: number;
+    method: string;
+    weights: AnalysisWeights;
+    rng: () => number;
+};
+
 export async function analyzeEntity(input: string, chainId: string = '1'): Promise<EntityData> {
     // 1. Fetch Real Data via Chain Engine
     const engine = getEngine(chainId);
@@ -14,6 +30,8 @@ export async function analyzeEntity(input: string, chainId: string = '1'): Promi
     if (!chainData) {
         throw new Error('Entity not found');
     }
+
+    const randomization = createRandomizationContext(chainData.address, chainId);
 
     // 1.5 Check for Known Famous Tokens (Whitelist)
     // 1.5 Check for Known Famous Tokens (Whitelist)
@@ -26,23 +44,27 @@ export async function analyzeEntity(input: string, chainId: string = '1'): Promi
         const token = FAMOUS_TOKENS[normalizedAddr];
         const ethPrice = await getEthPrice();
         const balance = parseFloat(chainData.balance);
+        const scoreVariance = Math.round((randomization.rng() - 0.5) * 6);
+        const minScore = Math.max(80, token.score - 4);
+        const maxScore = Math.min(100, token.score + 2);
+        const randomizedScore = clampNumber(token.score + scoreVariance, minScore, maxScore);
 
         return {
             id: `${token.name} (${token.symbol})`,
             address: chainData.address,
             type: 'token',
-            score: token.score,
-            label: 'Safe',
+            score: randomizedScore,
+            label: randomizedScore >= 80 ? 'Safe' : 'Caution',
             summary: `**VERIFIED ENTITY:** ${token.description} This is a well-known, high-trust smart contract in the ecosystem.`,
             risks: [
                 { type: 'success', title: 'Official Contract', description: `matches known CA for ${token.symbol}` },
                 { type: 'success', title: 'High Liquidity', description: 'Deep market depth and widely held.' },
                 { type: 'info', title: 'Verified Code', description: 'Source code audited and verified.' }
             ],
-            history: generateMockHistory(token.score),
-            sentiment: generateMockSentiment(token.score),
-            hypeScore: 95,
-            mentionsCount: 5000 + Math.floor(Math.random() * 10000),
+            history: generateMockHistory(randomizedScore, randomization.rng),
+            sentiment: generateMockSentiment(randomizedScore, randomization.rng),
+            hypeScore: clampNumber(90 + Math.floor(randomization.rng() * 10), 0, 100),
+            mentionsCount: 5000 + Math.floor(randomization.rng() * 10000),
             marketData: {
                 ethPriceUsd: ethPrice,
                 portfolioValueUsd: balance * ethPrice,
@@ -101,10 +123,10 @@ export async function analyzeEntity(input: string, chainId: string = '1'): Promi
 
     // 4. Final Weighted Formula (Step 5 of Master Plan)
     // Trust Score = 100 - (onchain*0.45 + market*0.30 + social*0.15 + ai*0.10)
-    const weightedDeduction = (onChainRisk * 0.45) +
-        (marketRisk * 0.30) +
-        (socialRisk * 0.15) +
-        (aiRisk * 0.10);
+    const weightedDeduction = (onChainRisk * randomization.weights.onChain) +
+        (marketRisk * randomization.weights.market) +
+        (socialRisk * randomization.weights.social) +
+        (aiRisk * randomization.weights.ai);
 
     const finalScore = Math.max(0, Math.min(100, Math.round(100 - weightedDeduction)));
 
@@ -128,8 +150,8 @@ export async function analyzeEntity(input: string, chainId: string = '1'): Promi
         label,
         summary: aiReport.summary,
         risks,
-        history: generateMockHistory(finalScore),
-        sentiment: generateMockSentiment(finalScore),
+        history: generateMockHistory(finalScore, randomization.rng),
+        sentiment: generateMockSentiment(finalScore, randomization.rng),
         hypeScore: hypeData.score,
         mentionsCount: hypeData.mentions,
         marketData: {
@@ -147,19 +169,104 @@ function buildSummary(data: ChainData, score: number): string {
 }
 
 // Helpers content to fill charts
-function generateMockHistory(baseScore: number): ScoreHistoryPoint[] {
+function generateMockHistory(baseScore: number, rng?: () => number): ScoreHistoryPoint[] {
+    const jitter = () => {
+        if (!rng) return 0;
+        return Math.round((rng() - 0.5) * 6);
+    };
     return [
-        { date: 'Jan', score: Math.max(0, baseScore - 5) },
-        { date: 'Feb', score: Math.max(0, baseScore + 2) },
-        { date: 'Mar', score: baseScore },
+        { date: 'Jan', score: clampNumber(baseScore - 5 + jitter(), 0, 100) },
+        { date: 'Feb', score: clampNumber(baseScore + 2 + jitter(), 0, 100) },
+        { date: 'Mar', score: clampNumber(baseScore + jitter(), 0, 100) },
     ]
 }
 
-function generateMockSentiment(baseScore: number): SentimentPoint[] {
+function generateMockSentiment(baseScore: number, rng?: () => number): SentimentPoint[] {
     const isGood = baseScore > 60;
+    const variance = () => {
+        if (!rng) return 0;
+        return Math.round((rng() - 0.5) * 12);
+    };
     return [
-        { time: '10:00', value: isGood ? 20 : -10 },
-        { time: '12:00', value: isGood ? 40 : -30 },
-        { time: '14:00', value: isGood ? 50 : -20 },
+        { time: '10:00', value: clampNumber((isGood ? 20 : -10) + variance(), -100, 100) },
+        { time: '12:00', value: clampNumber((isGood ? 40 : -30) + variance(), -100, 100) },
+        { time: '14:00', value: clampNumber((isGood ? 50 : -20) + variance(), -100, 100) },
     ]
+}
+
+function createRandomizationContext(address: string, chainId: string): RandomizationContext {
+    const intensity = 0.18;
+    const seed = getSecureRandomUint32();
+    const rng = mulberry32(seed);
+    const methods = getAnalysisMethods();
+    const method = methods[Math.floor(rng() * methods.length)];
+    const weights = applyWeightRandomization(method.weights, intensity, rng);
+    const seedHex = seed.toString(16).padStart(8, '0');
+
+    console.info('analysis_randomization', {
+        seed: seedHex,
+        method: method.name,
+        weights,
+        intensity,
+        chainId,
+        address
+    });
+
+    return {
+        seed,
+        seedHex,
+        intensity,
+        method: method.name,
+        weights,
+        rng
+    };
+}
+
+function getAnalysisMethods(): Array<{ name: string; weights: AnalysisWeights }> {
+    return [
+        { name: 'balanced', weights: { onChain: 0.45, market: 0.30, social: 0.15, ai: 0.10 } },
+        { name: 'onchain_focus', weights: { onChain: 0.55, market: 0.25, social: 0.12, ai: 0.08 } },
+        { name: 'market_focus', weights: { onChain: 0.35, market: 0.40, social: 0.15, ai: 0.10 } },
+        { name: 'social_focus', weights: { onChain: 0.40, market: 0.25, social: 0.25, ai: 0.10 } },
+        { name: 'ai_focus', weights: { onChain: 0.40, market: 0.25, social: 0.15, ai: 0.20 } }
+    ];
+}
+
+function applyWeightRandomization(base: AnalysisWeights, intensity: number, rng: () => number): AnalysisWeights {
+    const jittered = {
+        onChain: base.onChain * (1 + (rng() * 2 - 1) * intensity),
+        market: base.market * (1 + (rng() * 2 - 1) * intensity),
+        social: base.social * (1 + (rng() * 2 - 1) * intensity),
+        ai: base.ai * (1 + (rng() * 2 - 1) * intensity)
+    };
+    const total = jittered.onChain + jittered.market + jittered.social + jittered.ai;
+    return {
+        onChain: jittered.onChain / total,
+        market: jittered.market / total,
+        social: jittered.social / total,
+        ai: jittered.ai / total
+    };
+}
+
+function getSecureRandomUint32(): number {
+    const cryptoObj = globalThis.crypto;
+    if (cryptoObj && 'getRandomValues' in cryptoObj) {
+        const array = new Uint32Array(1);
+        cryptoObj.getRandomValues(array);
+        return array[0];
+    }
+    return Math.floor(Math.random() * 2 ** 32);
+}
+
+function mulberry32(seed: number): () => number {
+    return () => {
+        let t = seed += 0x6D2B79F5;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+
+function clampNumber(value: number, min: number, max: number): number {
+    return Math.max(min, Math.min(max, value));
 }

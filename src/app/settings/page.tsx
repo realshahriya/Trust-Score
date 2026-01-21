@@ -2,11 +2,10 @@
 
 import { Key, Bell, Shield, User, CreditCard, Database, Moon, Globe, Mail, Lock, Eye, EyeOff, Copy, Trash2, Plus, Wallet, AlertTriangle } from "lucide-react";
 import { useState } from "react";
-import { useAccount } from 'wagmi';
-import { appKit } from '@/lib/walletConfig';
+import { useMockWallet } from '@/components/WalletProvider';
 
 export default function SettingsPage() {
-    const { isConnected } = useAccount();
+    const { isConnected, connect } = useMockWallet();
     const [showApiKey, setShowApiKey] = useState(false);
     const [notifications, setNotifications] = useState({
         email: true,
@@ -28,7 +27,7 @@ export default function SettingsPage() {
                     </p>
                 </div>
                 <button
-                    onClick={() => appKit.open()}
+                    onClick={connect}
                     className="flex items-center gap-2 px-6 py-3 bg-neon/10 hover:bg-neon/20 border border-neon/20 hover:border-neon/30 rounded-xl text-neon font-mono font-bold transition-all"
                 >
                     <Wallet className="w-5 h-5" />

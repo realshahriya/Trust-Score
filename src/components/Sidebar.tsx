@@ -2,10 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Menu, Box, MessageSquare, X, Send, Wallet, BookOpen, Terminal, BarChart3, Settings, Lock } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useAccount, useDisconnect } from 'wagmi';
-import { appKit } from '@/lib/walletConfig';
+import { LayoutDashboard, Menu, MessageSquare, X, Send, Wallet, BookOpen, Terminal, BarChart3, Settings } from "lucide-react";
+import { useState } from "react";
+import { useMockWallet } from '@/components/WalletProvider';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function Sidebar() {
@@ -13,14 +12,8 @@ export function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
     const [showFeedback, setShowFeedback] = useState(false);
     const [feedbackType, setFeedbackType] = useState<"bug" | "feature" | "other">("feature");
-    const [mounted, setMounted] = useState(false);
 
-    const { address, isConnected } = useAccount();
-    const { disconnect } = useDisconnect();
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
+    const { address, isConnected, connect, disconnect } = useMockWallet();
 
     const formatAddress = (addr: string) => {
         return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
@@ -58,30 +51,6 @@ export function Sidebar() {
                         {links.map((link, index) => {
                             const Icon = link.icon;
                             const isActive = pathname === link.href;
-                            const isLocked = mounted && !isConnected && (link.name === "Dashboard" || link.name === "Settings");
-
-                            if (isLocked) {
-                                return (
-                                    <motion.div
-                                        key={link.href}
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{
-                                            delay: index * 0.05,
-                                            type: "spring",
-                                            stiffness: 260,
-                                            damping: 20
-                                        }}
-                                    >
-                                        <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-transparent font-mono text-sm text-zinc-600 cursor-not-allowed bg-black/20">
-                                            <Icon className="w-5 h-5 opacity-50" />
-                                            <span className="font-medium relative">{link.name}</span>
-                                            <Lock className="w-4 h-4 ml-auto opacity-40" />
-                                        </div>
-                                    </motion.div>
-                                );
-                            }
-
                             return (
                                 <motion.div
                                     key={link.href}
@@ -120,7 +89,7 @@ export function Sidebar() {
                     {/* Wallet Section */}
                     <div className="px-4 pb-4">
                         <AnimatePresence mode="wait">
-                            {mounted && isConnected && address ? (
+                            {isConnected && address ? (
                                 <motion.div
                                     key="connected"
                                     initial={{ opacity: 0, y: 10 }}
@@ -147,10 +116,10 @@ export function Sidebar() {
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -10 }}
                                     transition={{ duration: 0.3, ease: "easeOut" }}
-                                    disabled={true}
-                                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-neon/10 bg-white/5 cursor-not-allowed font-mono text-sm text-zinc-500"
+                                    onClick={connect}
+                                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-neon/20 bg-neon/5 hover:bg-neon/10 transition-all duration-300 font-mono text-sm text-neon"
                                 >
-                                    <Wallet className="w-5 h-5 text-zinc-600" />
+                                    <Wallet className="w-5 h-5 text-neon" />
                                     <span className="font-medium">Connect Wallet</span>
                                 </motion.button>
                             )}
@@ -173,7 +142,7 @@ export function Sidebar() {
                     {/* Footer */}
                     <div className="p-4 border-t border-subtle bg-black/20">
                         <div className="text-xs text-zinc-500 text-center font-mono">
-                            <b>version: Alpha v0.1.4</b>
+                            <b>version: Alpha v0.0.4</b>
                         </div>
                     </div>
                 </div>
@@ -202,24 +171,9 @@ export function Sidebar() {
 
                     {/* Navigation */}
                     <nav className="flex-1 px-4 py-6 space-y-1">
-                        {links.map((link, index) => {
+                        {links.map((link) => {
                             const Icon = link.icon;
                             const isActive = pathname === link.href;
-                            const isLocked = mounted && !isConnected && (link.name === "Dashboard" || link.name === "Settings");
-
-                            if (isLocked) {
-                                return (
-                                    <div
-                                        key={link.href}
-                                        className="flex items-center gap-3 px-4 py-3 rounded-xl border border-transparent font-mono text-sm text-zinc-600 cursor-not-allowed bg-black/20"
-                                    >
-                                        <Icon className="w-5 h-5 opacity-50" />
-                                        <span className="font-medium relative">{link.name}</span>
-                                        <Lock className="w-4 h-4 ml-auto opacity-40" />
-                                    </div>
-                                );
-                            }
-
                             return (
                                 <Link
                                     key={link.href}
@@ -242,7 +196,7 @@ export function Sidebar() {
 
                     {/* Wallet Section */}
                     <div className="px-4 pb-4">
-                        {mounted && isConnected && address ? (
+                        {isConnected && address ? (
                             <div className="space-y-2">
                                 <div className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-neon/20 bg-neon/5 font-mono text-sm">
                                     <Wallet className="w-5 h-5 text-neon" />
@@ -257,10 +211,10 @@ export function Sidebar() {
                             </div>
                         ) : (
                             <button
-                                disabled={true}
-                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-neon/10 bg-white/5 cursor-not-allowed font-mono text-sm text-zinc-500"
+                                onClick={connect}
+                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-neon/20 bg-neon/5 hover:bg-neon/10 transition-all duration-300 font-mono text-sm text-neon"
                             >
-                                <Wallet className="w-5 h-5 text-zinc-600" />
+                                <Wallet className="w-5 h-5 text-neon" />
                                 <span className="font-medium">Connect Wallet</span>
                             </button>
                         )}

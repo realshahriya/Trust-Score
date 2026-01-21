@@ -70,8 +70,8 @@ export function SearchInput({
                             <option value="ton" className="bg-surface text-zinc-300">The Open Network</option>
 
                             {/* Future Integrations */}
-                            <option value="cosmos" disabled className="bg-surface text-zinc-500">Cosmos Hub (Coming Soon)</option>
-                            <option value="polkadot" disabled className="bg-surface text-zinc-500">Polkadot (Coming Soon)</option>
+                            <option value="cosmos" className="bg-surface text-zinc-300">Cosmos Hub</option>
+                            <option value="polkadot" className="bg-surface text-zinc-300">Polkadot</option>
                         </select>
                     </div>
                 )}
